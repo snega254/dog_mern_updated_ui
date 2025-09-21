@@ -21,9 +21,9 @@ const UserDashboard = () => {
           <h3>Dog Adoption</h3>
         </div>
 
-        <div className="card" onClick={() => alert('Go to Accessories Page')}>
-          <img src="/logo/l2.jpg" alt="Accessories" />
-          <h3>Accessories</h3>
+        <div className="card" onClick={() => navigate('/accessories')}>
+         <img src="/logo/l2.jpg" alt="Accessories" />
+         <h3>Accessories</h3>
         </div>
 
         <div className="card" onClick={() => alert('Go to Doctor Booking')}>

@@ -1,433 +1,683 @@
-/* --- Global Styles --- */
+/* --- Enhanced Global Styles --- */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Consistent, readable font */
-  background: #f5f5f5; /* Light gray background for readability */
-  color: #333;
-  margin: 0;
-  padding: 20px;
-  line-height: 1.6;
+:root {
+  --primary: #ff6f61;
+  --primary-dark: #ff3b2e;
+  --primary-light: #ff9e89;
+  --secondary: #4e73df;
+  --accent: #36b9cc;
+  --success: #1cc88a;
+  --warning: #f6c23e;
+  --danger: #e74a3b;
+  --light: #f8f9fc;
+  --dark: #5a5c69;
+  --gray: #858796;
+  --gray-light: #f5f5f5;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
 }
 
-/* --- Header --- */
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* --- Enhanced Header --- */
 header {
-  background: #ff6f61; /* Coral red, visible in low-light early morning */
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: #fff;
   padding: 20px 0;
   text-align: center;
   position: relative;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 header .logout-btn {
   position: absolute;
   top: 25px;
-  right: 20px;
-  background: #333;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 8px 15px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 50px;
   text-decoration: none;
-  transition: background 0.3s;
+  transition: var(--transition);
   cursor: pointer;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 header .logout-btn:hover {
-  background: #555;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* --- Buttons --- */
+/* --- Enhanced Buttons --- */
 .btn {
   display: inline-block;
   margin: 20px 10px;
   padding: 12px 25px;
-  background: #ff6f61;
+  background: var(--primary);
   color: #fff;
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 50px;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
+  transition: var(--transition);
+  box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:hover {
-  background: #ff3b2e;
-  transform: scale(1.05);
+  background: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(255, 111, 97, 0.4);
 }
 
 .btn:active {
-  transform: scale(0.95);
-  background-color: #e55343;
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(255, 111, 97, 0.3);
 }
 
-/* --- Login/Registration Forms --- */
+/* --- Enhanced Login/Registration Forms --- */
 .login-form {
   background: #fff;
   padding: 40px;
-  width: 350px;
+  width: 380px;
   margin: 60px auto;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
 }
 
 .login-form:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .login-form h2 {
   margin-bottom: 25px;
-  color: #ff6f61;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.8rem;
 }
 
 .login-form input {
-  width: 80%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 12px 15px;
+  margin: 12px 0;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
   outline: none;
-  transition: border 0.3s, box-shadow 0.3s;
+  transition: var(--transition);
+  font-size: 1rem;
 }
 
 .login-form input:focus {
-  border-color: #ff6f61;
-  box-shadow: 0 0 8px rgba(255, 111, 97, 0.6);
-  outline: 3px solid #ff6f61;
-  outline-offset: 2px;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.2);
+  transform: translateY(-2px);
 }
 
 .login-form button {
   padding: 12px 25px;
-  background: #ff6f61;
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.3s;
+  font-weight: 600;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 10px;
+  box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
 }
 
 .login-form button:hover {
-  background: #ff3b2e;
-  transform: scale(1.05);
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 111, 97, 0.4);
 }
 
 .login-form button:active {
-  transform: scale(0.95);
-  background-color: #e55343;
-}
-
-.login-form button:focus {
-  outline: 3px solid #ff6f61;
-  outline-offset: 2px;
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(255, 111, 97, 0.3);
 }
 
 .login-form p {
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 14px;
+  color: var(--gray);
 }
 
-/* --- Card Container --- */
+/* --- Enhanced Card Container --- */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-  padding: 40px 20px;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 40px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-@media screen and (max-width: 900px) {
-  .card-container {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* --- Cards --- */
+/* --- Enhanced Cards --- */
 .card, .dog-card, .order-card {
   background: #fff;
-  border-radius: 10px;
-  padding: 15px;
+  border-radius: 16px;
+  padding: 0;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: var(--transition);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card::before, .dog-card::before, .order-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
 }
 
 .card:hover, .dog-card:hover, .order-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .card img, .dog-card img, .order-card img {
   width: 100%;
   height: 200px;
-  object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover img, .dog-card:hover img, .order-card:hover img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card h3, .dog-card h3, .order-card h3 {
-  margin: 10px 0 5px 0;
-  color: #ff6f61;
+  margin: 15px 0;
+  color: var(--primary);
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
 .card p, .dog-card p, .order-card p {
-  margin: 5px 0;
-  color: #555;
+  color: var(--gray);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .card button, .dog-card button, .order-card button {
   margin: 5px;
-  padding: 8px 12px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, transform 0.3s;
+  font-weight: 600;
+  transition: var(--transition);
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 3px 8px rgba(255, 111, 97, 0.3);
 }
 
 .card button:hover, .dog-card button:hover, .order-card button:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(255, 111, 97, 0.4);
+  background: var(--primary-dark);
 }
 
 .card button:active, .dog-card button:active, .order-card button:active {
-  transform: scale(0.95);
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(255, 111, 97, 0.3);
 }
 
-/* --- Coming Soon Cards --- */
+/* --- Enhanced Coming Soon Cards --- */
 .coming-soon {
-  opacity: 0.6;
+  position: relative;
 }
 
-/* --- Interactive Button Hover Effect --- */
+.coming-soon::after {
+  content: 'COMING SOON';
+  position: absolute;
+  top: 15px;
+  right: -30px;
+  background: var(--secondary);
+  color: white;
+  padding: 5px 30px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Enhanced Interactive Buttons --- */
 .confirm-btn {
-  background: #4CAF50;
+  background: var(--success);
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 3px 8px rgba(28, 200, 138, 0.3);
 }
 
 .confirm-btn:hover {
-  background: #45a049;
-}
-
-.confirm-btn:active {
-  transform: scale(0.95);
+  background: #17a673;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(28, 200, 138, 0.4);
 }
 
 .cancel-btn {
-  background: #f44336;
+  background: var(--danger);
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 3px 8px rgba(231, 74, 59, 0.3);
 }
 
 .cancel-btn:hover {
-  background: #da190b;
-}
-
-.cancel-btn:active {
-  transform: scale(0.95);
+  background: #e02d1b;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(231, 74, 59, 0.4);
 }
 
 .sold-btn {
-  background: #FF9800;
+  background: var(--warning);
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 3px 8px rgba(246, 194, 62, 0.3);
 }
 
 .sold-btn:hover {
-  background: #f57c00;
-}
-
-.sold-btn:active {
-  transform: scale(0.95);
+  background: #f4b619;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(246, 194, 62, 0.4);
 }
 
 .order-status {
   font-weight: bold;
   margin-top: 5px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.85rem;
 }
 
-/* --- Landing Page --- */
-.login-options {
-  margin-top: 60px;
+.status-pending {
+  background: #fef5e6;
+  color: var(--warning);
 }
 
-/* --- Responsive --- */
-@media screen and (max-width: 768px) {
-  .login-form {
-    width: 90%;
-    padding: 30px;
-  }
-  .card-container {
-    grid-template-columns: 1fr;
-  }
+.status-completed {
+  background: #e6f4ee;
+  color: var(--success);
 }
 
-/* --- Adoption Controls --- */
-.adoption-page .filters {
+.status-cancelled {
+  background: #fde8e6;
+  color: var(--danger);
+}
+
+/* --- Enhanced Landing Page --- */
+.index-container {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #fefefe 0%, #ffdede 100%);
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  animation: fadeIn 1s ease forwards;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.index-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 245, 245, 0) 70%);
+  transform: rotate(30deg);
+  z-index: 0;
+}
+
+.welcome-text {
+  font-size: 3.5rem;
+  color: var(--primary);
+  font-weight: 900;
+  letter-spacing: 3px;
   margin-bottom: 20px;
+  user-select: none;
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.adoption-page .filters input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s, box-shadow 0.3s;
+.welcome-text:hover {
+  color: var(--primary-dark);
+  transform: scale(1.05);
 }
 
-.adoption-page .filters input:focus {
-  border-color: #ff6f61;
-  box-shadow: 0 0 8px rgba(255, 111, 97, 0.6);
-  outline: 3px solid #ff6f61;
-  outline-offset: 2px;
+.prompt-text {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  font-weight: 600;
+  color: var(--dark);
+  user-select: none;
+  position: relative;
+  z-index: 1;
 }
 
-/* --- Sell Dog Form --- */
-.sell-dog-form {
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.interactive-btn {
+  margin: 20px 15px;
+  padding: 15px 35px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  box-shadow: 0 8px 15px rgba(255, 111, 97, 0.4);
+  transition: var(--transition);
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
-.sell-dog-form h2 {
-  margin-bottom: 20px;
+.interactive-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  opacity: 0;
+  transition: var(--transition);
+  z-index: -1;
 }
 
-.sell-dog-form .form-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+.interactive-btn:hover::before {
+  opacity: 1;
 }
 
-.sell-dog-form select, .sell-dog-form input[type="file"] {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s, box-shadow 0.3s;
+.interactive-btn:hover {
+  transform: scale(1.1) translateY(-6px);
+  box-shadow: 0 12px 25px rgba(255, 111, 97, 0.7);
 }
 
-.sell-dog-form select:focus, .sell-dog-form input[type="file"]:focus {
-  border-color: #ff6f61;
-  box-shadow: 0 0 8px rgba(255, 111, 97, 0.6);
-  outline: 3px solid #ff6f61;
-  outline-offset: 2px;
-}
-
-.sell-dog-form button {
-  background: #4CAF50;
-  color: #fff;
-  padding: 10px 20px;
-  transition: background 0.3s;
-  cursor: pointer;
-}
-
-.sell-dog-form button:hover {
-  background: #45a049;
-}
-
-.sell-dog-form button:active {
+.interactive-btn:active {
   transform: scale(0.95);
+  box-shadow: 0 6px 12px rgba(255, 111, 97, 0.5);
 }
 
-/* --- Dog ID Row --- */
-.dog-id-row {
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.dog-id-row p {
-  font-size: 16px;
-  color: #ff6f61;
-  font-weight: bold;
-}
-
-/* --- Modal Overlay --- */
+/* --- Enhanced Modal --- */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
   background: #fff;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 30px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 90%;
+  width: 400px;
+  position: relative;
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-content p {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  line-height: 1.5;
 }
 
-/* Modal buttons with hover and focus */
 .modal-content button {
-  margin: 0 5px;
-  padding: 8px 15px;
+  margin: 0 10px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s, opacity 0.3s, transform 0.3s;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content button:hover {
-  opacity: 0.9;
-  transform: scale(1.05);
-}
-
-.modal-content button:focus {
-  outline: 3px solid #ff6f61;
-  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content button:active {
-  transform: scale(0.95);
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content .modal-yes {
-  background: #4CAF50;
-  color: #fff;
+/* --- Enhanced Forms --- */
+.sell-dog-form {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.modal-content .modal-no {
-  background: #f44336;
-  color: #fff;
+.sell-dog-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
 }
 
-/* --- Links with animated underline --- */
+.sell-dog-form h2 {
+  margin-bottom: 25px;
+  color: var(--primary);
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.sell-dog-form .form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sell-dog-form select, .sell-dog-form input[type="file"] {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: var(--transition);
+  min-width: 200px;
+}
+
+.sell-dog-form select:focus, .sell-dog-form input[type="file"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.2);
+  outline: none;
+}
+
+/* --- Responsive Improvements --- */
+@media screen and (max-width: 768px) {
+  .login-form {
+    width: 90%;
+    padding: 30px;
+  }
+  
+  .card-container {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+  }
+  
+  header h1 {
+    font-size: 1.8rem;
+    padding: 0 60px;
+  }
+  
+  header .logout-btn {
+    right: 20px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .welcome-text {
+    font-size: 2.5rem;
+  }
+  
+  .sell-dog-form .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .sell-dog-form select, .sell-dog-form input[type="file"] {
+    min-width: 100%;
+  }
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* --- Utility Classes --- */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.shadow-lg {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+}
+
+.rounded-lg {
+  border-radius: 16px !important;
+}
+
+/* --- Enhanced Links --- */
 a {
   position: relative;
   text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease;
+  color: var(--primary);
+  transition: var(--transition);
+  font-weight: 600;
 }
 
 a::after {
@@ -435,9 +685,9 @@ a::after {
   position: absolute;
   width: 0;
   height: 2px;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
-  background-color: #ff6f61;
+  background-color: var(--primary);
   transition: width 0.3s ease;
 }
 
@@ -445,7 +695,6 @@ a:hover::after {
   width: 100%;
 }
 
-/* --- Cursors for clickable items --- */
-.card button, .dog-card button, .order-card button, .logout-btn {
-  cursor: pointer;
+a:hover {
+  color: var(--primary-dark);
 }

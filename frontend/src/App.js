@@ -11,6 +11,7 @@ import SellDog from './components/SellDog';
 import DogChat from './components/DogChat';
 import Index from './components/Index'; // Import the new Index component
 import DogDetails from './components/DogDetails';
+import Accessories from './components/Accessories'; // Import the Accessories component
 
 // Helper to safely decode JWT
 function getUserTypeFromToken() {
@@ -72,6 +73,7 @@ function App() {
         <Route path="/sell_dog" element={<SellDog />} />
         <Route path="/dogchat" element={<DogChat />} />
         <Route path="/dog-details/:dogId" element={<DogDetails />} />
+        <Route path="/accessories" element={<Accessories />} /> {/* Add this line */}
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

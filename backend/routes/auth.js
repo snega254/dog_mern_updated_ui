@@ -65,8 +65,8 @@ const loginUser = async ({ email, password, userType }) => {
 router.post('/user/register', validateRegistration, async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
-    await registerUser({ name, email, password, contact, userType: 'user' });
-    const token = jwt.sign({ userType: 'user' }, JWT_SECRET, { expiresIn: '1h' });
+    const user = await registerUser({ name, email, password, contact, userType: 'user' });
+    const token = jwt.sign({ id: user._id, userType: 'user' }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ success: true, message: 'User registered successfully', token });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -88,8 +88,8 @@ router.post('/user/login', validateLogin, async (req, res) => {
 router.post('/seller/register', validateRegistration, async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
-    await registerUser({ name, email, password, contact, userType: 'seller' });
-    const token = jwt.sign({ userType: 'seller' }, JWT_SECRET, { expiresIn: '1h' });
+    const user = await registerUser({ name, email, password, contact, userType: 'seller' });
+    const token = jwt.sign({ id: user._id, userType: 'seller' }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ success: true, message: 'Seller registered successfully', token });
   } catch (err) {
     res.status(400).json({ message: err.message });
