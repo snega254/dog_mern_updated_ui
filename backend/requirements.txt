@@ -1,0 +1,4 @@
+uuid
+razorpay
+
+express mongoose cors dotenv bcryptjs jsonwebtoken multer

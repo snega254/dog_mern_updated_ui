@@ -1,0 +1,238 @@
+/* LoginUser.css */
+.login-user-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-user-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+  opacity: 0.1;
+}
+
+.login-user-form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 50px 40px;
+  border-radius: 25px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.login-user-form:hover {
+  transform: translateY(-5px);
+}
+
+.login-user-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-user-header h2 {
+  color: #2d3748;
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-user-header p {
+  color: #718096;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 300;
+}
+
+.user-form-group {
+  margin-bottom: 25px;
+}
+
+.user-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.user-form-group input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  box-sizing: border-box;
+}
+
+.user-form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.user-form-group input:disabled {
+  background-color: #f7fafc;
+  opacity: 0.7;
+}
+
+.user-error-message {
+  background: linear-gradient(135deg, #fed7d7, #feb2b2);
+  color: #c53030;
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  border-left: 4px solid #e53e3e;
+  font-weight: 500;
+}
+
+.user-login-btn {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: white;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.user-login-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+}
+
+.user-login-btn:active {
+  transform: translateY(-1px);
+}
+
+.user-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.user-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.user-login-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.user-login-footer p {
+  margin: 12px 0;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.user-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.user-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.user-demo-credentials {
+  background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 25px;
+  border-left: 4px solid #48bb78;
+}
+
+.user-demo-credentials h4 {
+  color: #22543d;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+.user-demo-credentials p {
+  color: #2d774b;
+  margin: 5px 0;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-user-container {
+    padding: 15px;
+  }
+  
+  .login-user-form {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+  
+  .login-user-header h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-user-form {
+    padding: 30px 20px;
+  }
+  
+  .login-user-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .user-form-group input {
+    padding: 12px 15px;
+  }
+  
+  .user-login-btn {
+    padding: 15px;
+    font-size: 1rem;
+  }
+}

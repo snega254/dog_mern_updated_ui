@@ -1,455 +1,347 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './ManageDogOrders.css';
 
 const ManageDogOrders = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        setLoading(true);
-        const res = await axios.get('http://localhost:5000/api/orders', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOrders(res.data);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to fetch orders. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
 
-  const confirmOrder = async (index) => {
-    const order = orders[index];
-    const token = localStorage.getItem('token');
+  const fetchOrders = async () => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/orders/${order._id}`,
-        { status: 'confirmed' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const updatedOrders = orders.map((o, i) =>
-        i === index ? { ...o, status: 'confirmed' } : o
-      );
-      setOrders(updatedOrders);
-      alert(`${order.dogId.breed}'s order is confirmed!`);
-    } catch (err) {
-      console.error(err);
-      alert('Error confirming order');
-    }
-  };
-
-  const markSold = async (index) => {
-    const order = orders[index];
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(
-        `http://localhost:5000/api/orders/${order._id}`,
-        { status: 'sold' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const updatedOrders = orders.map((o, i) =>
-        i === index ? { ...o, status: 'sold' } : o
-      );
-      setOrders(updatedOrders);
-      alert(`${order.dogId.breed} is marked as Sold!`);
-    } catch (err) {
-      console.error(err);
-      alert('Error marking as sold');
-    }
-  };
-
-  const cancelOrder = async (index) => {
-    if (window.confirm('Are you sure you want to delete this order?')) {
-      const order = orders[index];
       const token = localStorage.getItem('token');
-      try {
-        await axios.delete(`http://localhost:5000/api/orders/${order._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const updatedOrders = orders.filter((_, i) => i !== index);
-        setOrders(updatedOrders);
-        alert(`${order.dogId.breed} order deleted.`);
-      } catch (err) {
-        console.error(err);
-        alert('Error deleting order');
-      }
+      const response = await axios.get('http://localhost:5000/api/orders', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOrders(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setLoading(false);
     }
   };
 
-  if (loading) return (
-    <div className="orders-container">
-      <div className="loading-spinner"></div>
-      <p>Loading orders...</p>
-    </div>
-  );
-  
-  if (error) return (
-    <div className="orders-container">
-      <div className="error-message">{error}</div>
-    </div>
-  );
-  
-  if (orders.length === 0) return (
-    <div className="orders-container">
-      <div className="no-orders">
-        <svg viewBox="0 0 24 24" width="64" height="64">
-          <path fill="#ccc" d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/>
-        </svg>
-        <h3>No orders found</h3>
-        <p>There are currently no dog orders to manage.</p>
-        <button className="back-button" onClick={() => navigate('/sell-dog')}>
-          Back to Sell Dog
-        </button>
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `http://localhost:5000/api/orders/${orderId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Update local state
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, status: newStatus } : order
+      ));
+
+      alert(`Order ${newStatus} successfully!`);
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert('Failed to update order status. Please try again.');
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { class: 'pending', label: 'Pending' },
+      confirmed: { class: 'confirmed', label: 'Confirmed' },
+      completed: { class: 'completed', label: 'Completed' },
+      cancelled: { class: 'cancelled', label: 'Cancelled' }
+    };
+
+    const config = statusConfig[status] || statusConfig.pending;
+    return <span className={`status-badge ${config.class}`}>{config.label}</span>;
+  };
+
+  const getFilteredOrders = () => {
+    if (statusFilter === 'all') return orders;
+    return orders.filter(order => order.status === statusFilter);
+  };
+
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
+  };
+
+  const getStatusActions = (order) => {
+    switch (order.status) {
+      case 'pending':
+        return (
+          <div className="order-actions">
+            <button
+              onClick={() => updateOrderStatus(order._id, 'confirmed')}
+              className="btn-confirm"
+            >
+              Confirm Adoption
+            </button>
+            <button
+              onClick={() => updateOrderStatus(order._id, 'cancelled')}
+              className="btn-cancel"
+            >
+              Cancel
+            </button>
+          </div>
+        );
+      case 'confirmed':
+        return (
+          <div className="order-actions">
+            <button
+              onClick={() => updateOrderStatus(order._id, 'completed')}
+              className="btn-complete"
+            >
+              Mark as Completed
+            </button>
+            <button
+              onClick={() => updateOrderStatus(order._id, 'cancelled')}
+              className="btn-cancel"
+            >
+              Cancel
+            </button>
+          </div>
+        );
+      case 'completed':
+        return (
+          <div className="order-actions">
+            <span className="completed-text">Adoption Completed</span>
+          </div>
+        );
+      case 'cancelled':
+        return (
+          <div className="order-actions">
+            <span className="cancelled-text">Order Cancelled</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading adoption requests...</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const filteredOrders = getFilteredOrders();
 
   return (
-    <div className="orders-container">
+    <div className="manage-orders-container">
       <header className="orders-header">
-        <h1>Manage Dog Orders</h1>
-        <p>Review and manage all dog adoption orders</p>
+        <div className="header-content">
+          <h1>🐕 Manage Adoption Requests</h1>
+          <p>Review and manage incoming dog adoption requests</p>
+        </div>
+        <button onClick={() => navigate('/dashboard_seller')} className="back-btn">
+          Back to Dashboard
+        </button>
       </header>
 
-      <div className="orders-grid">
-        {orders.map((order, index) => (
-          <div className="order-card" key={order._id}>
-            <div className="order-image">
-              <img
-                src={
-                  order.dogId?.image && order.dogId.image.trim() !== ''
-                    ? `http://localhost:5000/uploads/${order.dogId.image.split('/').pop()}`
-                    : 'http://localhost:5000/uploads/placeholder-image.jpg'
-                }
-                alt={order.dogId?.breed || 'Dog'}
-                onError={(e) => {
-                  e.target.src = 'http://localhost:5000/uploads/placeholder-image.jpg';
-                }}
-              />
-              <div className={`status-badge ${order.status}`}>
-                {order.status}
-              </div>
-            </div>
-            
-            <div className="order-details">
-              <h3>{order.dogId?.breed || 'Unknown Breed'}</h3>
-              <p className="dog-id">ID: {order.dogId?.dogId || 'N/A'}</p>
-              
-              <div className="customer-info">
-                <svg viewBox="0 0 24 24" width="16" height="16">
-                  <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-                <span>{order.customerName || 'Unknown Customer'}</span>
-              </div>
-              
-              <div className="order-date">
-                <svg viewBox="0 0 24 24" width="16" height="16">
-                  <path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <span>Ordered: {new Date(order.createdAt).toLocaleDateString()}</span>
-              </div>
-            </div>
-            
-            <div className="order-actions">
-              {order.status === 'pending' && (
-                <>
-                  <button 
-                    className="btn-confirm"
-                    onClick={() => confirmOrder(index)}
-                  >
-                    Confirm Order
-                  </button>
-                  <button 
-                    className="btn-sold"
-                    onClick={() => markSold(index)}
-                  >
-                    Mark as Sold
-                  </button>
-                  <button 
-                    className="btn-cancel"
-                    onClick={() => cancelOrder(index)}
-                  >
-                    Cancel Order
-                  </button>
-                </>
-              )}
-              {order.status === 'confirmed' && (
-                <>
-                  <button 
-                    className="btn-sold"
-                    onClick={() => markSold(index)}
-                  >
-                    Mark as Sold
-                  </button>
-                  <button 
-                    className="btn-cancel"
-                    onClick={() => cancelOrder(index)}
-                  >
-                    Cancel Order
-                  </button>
-                </>
-              )}
-              {order.status === 'sold' && (
-                <div className="sold-badge">
-                  <svg viewBox="0 0 24 24" width="20" height="20">
-                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                  </svg>
-                  Sold
-                </div>
-              )}
-            </div>
+      {/* Stats Overview */}
+      <div className="orders-stats">
+        <div className="stat-card">
+          <div className="stat-number">{orders.length}</div>
+          <div className="stat-label">Total Requests</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-number">
+            {orders.filter(o => o.status === 'pending').length}
           </div>
-        ))}
-      </div>
-      
-      <div className="footer-actions">
-        <button className="back-button" onClick={() => navigate('/sell-dog')}>
-          Back to Sell Dog
-        </button>
+          <div className="stat-label">Pending</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-number">
+            {orders.filter(o => o.status === 'confirmed').length}
+          </div>
+          <div className="stat-label">Confirmed</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-number">
+            {orders.filter(o => o.status === 'completed').length}
+          </div>
+          <div className="stat-label">Completed</div>
+        </div>
       </div>
 
-      <style jsx>{`
-        .orders-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          color: #333;
-        }
-        
-        .orders-header {
-          text-align: center;
-          margin-bottom: 40px;
-        }
-        
-        .orders-header h1 {
-          font-size: 2.5rem;
-          color: #2c3e50;
-          margin-bottom: 10px;
-          font-weight: 700;
-        }
-        
-        .orders-header p {
-          font-size: 1.1rem;
-          color: #7f8c8d;
-          margin: 0;
-        }
-        
-        .orders-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 25px;
-          margin-bottom: 40px;
-        }
-        
-        .order-card {
-          background: #fff;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          display: flex;
-          flex-direction: column;
-        }
-        
-        .order-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        
-        .order-image {
-          position: relative;
-          height: 200px;
-          overflow: hidden;
-        }
-        
-        .order-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        
-        .status-badge {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          padding: 5px 12px;
-          border-radius: 20px;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-        
-        .status-badge.pending {
-          background: #fff4e6;
-          color: #e67700;
-        }
-        
-        .status-badge.confirmed {
-          background: #d3f9d8;
-          color: #2b8a3e;
-        }
-        
-        .status-badge.sold {
-          background: #d0ebff;
-          color: #1971c2;
-        }
-        
-        .order-details {
-          padding: 20px;
-          flex-grow: 1;
-        }
-        
-        .order-details h3 {
-          margin: 0 0 5px 0;
-          font-size: 1.3rem;
-          color: #2c3e50;
-        }
-        
-        .dog-id {
-          color: #7f8c8d;
-          margin: 0 0 15px 0;
-          font-size: 0.9rem;
-        }
-        
-        .customer-info, .order-date {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 10px;
-          font-size: 0.9rem;
-          color: #5c6b7e;
-        }
-        
-        .order-actions {
-          padding: 0 20px 20px 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        
-        .order-actions button {
-          padding: 10px;
-          border: none;
-          border-radius: 6px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        
-        .btn-confirm {
-          background: #40c057;
-          color: white;
-        }
-        
-        .btn-confirm:hover {
-          background: #2f9e44;
-        }
-        
-        .btn-sold {
-          background: #228be6;
-          color: white;
-        }
-        
-        .btn-sold:hover {
-          background: #1c7ed6;
-        }
-        
-        .btn-cancel {
-          background: #fa5252;
-          color: white;
-        }
-        
-        .btn-cancel:hover {
-          background: #e03131;
-        }
-        
-        .sold-badge {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 10px;
-          background: #d3f9d8;
-          color: #2b8a3e;
-          border-radius: 6px;
-          font-weight: 600;
-        }
-        
-        .footer-actions {
-          text-align: center;
-          margin-top: 30px;
-        }
-        
-        .back-button {
-          padding: 12px 24px;
-          background: #495057;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
-        
-        .back-button:hover {
-          background: #343a40;
-        }
-        
-        .no-orders {
-          text-align: center;
-          padding: 60px 20px;
-          color: #95a5a6;
-        }
-        
-        .no-orders h3 {
-          margin: 20px 0 10px 0;
-          font-size: 1.5rem;
-        }
-        
-        .loading-spinner {
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #3498db;
-          border-radius: 50%;
-          width: 50px;
-          height: 50px;
-          animation: spin 1s linear infinite;
-          margin: 0 auto 20px;
-        }
-        
-        .error-message {
-          background: #ffecec;
-          color: #e74c3c;
-          padding: 15px;
-          border-radius: 8px;
-          text-align: center;
-          margin: 20px 0;
-        }
-        
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-          .orders-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .order-card {
-            max-width: 100%;
-          }
-        }
-      `}</style>
+      {/* Filters */}
+      <div className="filters-section">
+        <div className="filter-group">
+          <label>Filter by Status:</label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Orders List */}
+      <div className="orders-list">
+        {filteredOrders.length === 0 ? (
+          <div className="no-orders">
+            <div className="no-orders-icon">📋</div>
+            <h3>No adoption requests found</h3>
+            <p>When you receive adoption requests, they will appear here.</p>
+          </div>
+        ) : (
+          filteredOrders.map(order => (
+            <div key={order._id} className="order-card">
+              <div className="order-header">
+                <div className="order-info">
+                  <h3>{order.dogId?.breed || 'Unknown Breed'}</h3>
+                  <p className="order-id">Request ID: {order._id}</p>
+                </div>
+                {getStatusBadge(order.status)}
+              </div>
+
+              <div className="order-details">
+                <div className="detail-row">
+                  <span className="detail-label">Dog ID:</span>
+                  <span className="detail-value">{order.dogId?.dogId || 'N/A'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Requested by:</span>
+                  <span className="detail-value">
+                    {order.userId?.name} ({order.userId?.email})
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Contact:</span>
+                  <span className="detail-value">{order.userId?.contact || 'N/A'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Requested on:</span>
+                  <span className="detail-value">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                {order.message && (
+                  <div className="detail-row">
+                    <span className="detail-label">Message:</span>
+                    <span className="detail-value message-text">{order.message}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="order-footer">
+                <button
+                  onClick={() => handleViewDetails(order)}
+                  className="btn-details"
+                >
+                  View Details
+                </button>
+                {getStatusActions(order)}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Order Details Modal */}
+      {showDetailsModal && selectedOrder && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Adoption Request Details</h2>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="close-modal"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="detail-section">
+                <h3>Dog Information</h3>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span>Breed:</span>
+                    <span>{selectedOrder.dogId?.breed}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span>Dog ID:</span>
+                    <span>{selectedOrder.dogId?.dogId}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span>Age:</span>
+                    <span>{selectedOrder.dogId?.age}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span>Gender:</span>
+                    <span>{selectedOrder.dogId?.gender}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h3>Adopter Information</h3>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span>Name:</span>
+                    <span>{selectedOrder.userId?.name}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span>Email:</span>
+                    <span>{selectedOrder.userId?.email}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span>Contact:</span>
+                    <span>{selectedOrder.userId?.contact || 'Not provided'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {selectedOrder.message && (
+                <div className="detail-section">
+                  <h3>Adopter's Message</h3>
+                  <div className="message-box">
+                    {selectedOrder.message}
+                  </div>
+                </div>
+              )}
+
+              <div className="detail-section">
+                <h3>Request Timeline</h3>
+                <div className="timeline">
+                  <div className="timeline-item">
+                    <span className="timeline-date">
+                      {new Date(selectedOrder.createdAt).toLocaleDateString()}
+                    </span>
+                    <span className="timeline-event">Adoption Request Submitted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="btn-close"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

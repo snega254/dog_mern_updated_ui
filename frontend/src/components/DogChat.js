@@ -1,152 +1,230 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import axios from 'axios';
+import './DogChat.css';
 
 const DogChat = () => {
-  const [message, setMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [username, setUsername] = useState('User'); // default
+  const messagesEndRef = useRef(null);
 
-  // Fetch logged-in user's username from backend
+  const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+  const genAI = new GoogleGenerativeAI(API_KEY);
+
   useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const res = await axios.get('/api/current-user'); // backend route
-        setUsername(res.data.username);
-      } catch (err) {
-        console.error('Failed to fetch username:', err);
+    // Initialize with welcome message
+    setMessages([
+      {
+        id: 1,
+        text: "Hello! I'm your Dog Care Assistant. I can help you with dog adoption, training, health, nutrition, and behavior questions. What would you like to know?",
+        sender: 'bot',
+        timestamp: new Date()
       }
-    };
-    fetchUsername();
+    ]);
   }, []);
 
-  // Initialize Gemini API client
-  const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-  const handleSend = async () => {
-    if (!message.trim()) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-    // Add user message
-    setChatHistory(prev => [...prev, { text: message, sender: 'user' }]);
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      text: inputMessage,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
     setIsLoading(true);
 
     try {
-      const prompt = `
-You are a friendly dog expert.  
-- Always answer any question related to dogs (breeds, names, adoption, food, training, care, behavior, health, activities, etc.) with a clear, helpful, and detailed response.  
-- If the user specifically asks for dog names, provide a list of names, each on a new line.  
-- If the question is not related to dogs at all, reply only with: "I only answer dog-related questions."
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-User: ${message}
-`;
+      const prompt = `You are a friendly and knowledgeable dog care expert. Provide helpful, accurate, and compassionate advice about:
+
+- Dog adoption process and considerations
+- Dog training techniques and tips  
+- Health and nutrition guidance
+- Behavior issues and solutions
+- Breed-specific information
+- Puppy care and socialization
+- Senior dog care
+- Emergency first aid for dogs
+- Grooming and hygiene
+- Exercise and activity requirements
+
+User Question: "${inputMessage}"
+
+Please provide a detailed, helpful response. If the question is not related to dogs, politely explain that you specialize in dog-related topics.
+
+Format your response in a clear, easy-to-read way with proper paragraphs. Be supportive and encouraging.`;
 
       const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
+      const response = await result.response;
+      const text = response.text();
 
-      setChatHistory(prev => [...prev, { text: responseText, sender: 'bot' }]);
-    } catch (err) {
-      setChatHistory(prev => [...prev, { text: 'Error connecting to Gemini API', sender: 'bot' }]);
+      const botMessage = {
+        id: Date.now() + 1,
+        text: text,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+
+    } catch (error) {
+      console.error('Error with Gemini API:', error);
+      
+      let errorText = "I'm sorry, I'm having trouble connecting right now. ";
+      
+      if (error.message.includes('quota') || error.status === 429) {
+        errorText += "API quota exceeded. Please check your Google AI Studio usage limits or try again later.";
+      } else if (error.message.includes('API_KEY') || error.status === 400) {
+        errorText += "There's an issue with the API configuration. Please check your API key.";
+      } else if (error.message.includes('network')) {
+        errorText += "Network connection issue. Please check your internet connection.";
+      } else {
+        errorText += "Please try again in a moment.";
+      }
+
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: errorText,
+        sender: 'bot',
+        timestamp: new Date(),
+        isError: true
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    setMessage('');
-    setIsLoading(false);
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const quickQuestions = [
+    "How to train a puppy?",
+    "Best dog food for small breeds?",
+    "How often should I walk my dog?",
+    "Dog grooming tips",
+    "Common health issues in dogs",
+    "How to socialize a dog?"
+  ];
+
+  const handleQuickQuestion = (question) => {
+    setInputMessage(question);
+    // Auto-send after a short delay
+    setTimeout(() => {
+      handleSendMessage();
+    }, 100);
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '1000px',
-        margin: '20px auto',
-        padding: '20px',
-        border: '2px solid #ccc',
-        borderRadius: '15px',
-        backgroundColor: '#fafafa',
-        boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-        height: '90vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <h2 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '28px' }}>
-        🐶 Dog Chat
-      </h2>
+    <div className="dog-chat-container">
+      <div className="chat-header">
+        <div className="header-content">
+          <h1>🐕 Dog Care Assistant</h1>
+          <p>Ask me anything about dogs, adoption, training, and health!</p>
+        </div>
+        <div className="chat-stats">
+          <span>{messages.length} messages</span>
+          <span style={{color: '#10b981'}}>✅ API Connected</span>
+        </div>
+      </div>
 
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          border: '1px solid #bbb',
-          borderRadius: '10px',
-          padding: '15px',
-          marginBottom: '15px',
-          backgroundColor: '#fff',
-          fontSize: '16px',
-          lineHeight: '1.5'
-        }}
-      >
-        {chatHistory.map((msg, index) => (
-          <div
-            key={index}
-            style={{
-              display: 'flex',
-              justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-              marginBottom: '12px'
-            }}
-          >
-            <div
-              style={{
-                background: msg.sender === 'user' ? '#007bff' : '#f1f1f1',
-                color: msg.sender === 'user' ? '#fff' : '#000',
-                padding: '10px 15px',
-                borderRadius: '12px',
-                maxWidth: '70%',
-                wordWrap: 'break-word',
-                textAlign: 'left'
-              }}
+      {/* Quick Questions */}
+      <div className="quick-questions">
+        <h3>Quick Questions:</h3>
+        <div className="question-chips">
+          {quickQuestions.map((question, index) => (
+            <button
+              key={index}
+              className="question-chip"
+              onClick={() => handleQuickQuestion(question)}
+              disabled={isLoading}
             >
-              <strong>{msg.sender === 'user' ? username : 'DogBot'}:</strong> {msg.text}
+              {question}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="chat-messages">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`message ${message.sender} ${message.isError ? 'error' : ''}`}
+          >
+            <div className="message-avatar">
+              {message.sender === 'bot' ? '🐕' : '👤'}
+            </div>
+            <div className="message-content">
+              <div className="message-text">{message.text}</div>
+              <div className="message-time">
+                {message.timestamp.toLocaleTimeString([], { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </div>
             </div>
           </div>
         ))}
-        {isLoading && <p><em>DogBot is typing...</em></p>}
+        
+        {isLoading && (
+          <div className="message bot">
+            <div className="message-avatar">🐕</div>
+            <div className="message-content">
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <div ref={messagesEndRef} />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask about dogs..."
-          disabled={isLoading}
-          style={{
-            flex: 1,
-            padding: '12px',
-            fontSize: '16px',
-            borderRadius: '10px',
-            border: '1px solid #aaa'
-          }}
-        />
-        <button
-          onClick={handleSend}
-          disabled={isLoading}
-          style={{
-            padding: '12px 25px',
-            marginLeft: '10px',
-            fontSize: '16px',
-            borderRadius: '10px',
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            cursor: isLoading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {isLoading ? 'Sending...' : 'Send'}
-        </button>
+      {/* Chat Input */}
+      <div className="chat-input-container">
+        <div className="input-wrapper">
+          <textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Ask about dog care, training, health, or adoption..."
+            rows="1"
+            className="chat-input"
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={!inputMessage.trim() || isLoading}
+            className="send-button"
+          >
+            {isLoading ? '⏳' : '📤'}
+          </button>
+        </div>
+        <div className="input-hint">
+          Press Enter to send • Shift+Enter for new line
+        </div>
       </div>
-
-    
     </div>
   );
 };

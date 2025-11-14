@@ -1,0 +1,300 @@
+/* SellerDashboard.css - Pink Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%) !important;
+  margin: 0;
+  padding: 0;
+}
+
+.seller-dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Welcome Section - White text on pink background */
+.welcome-section {
+  background: linear-gradient(135deg, #f3eef0 0%, #f7f5f6 100%);
+  color: rgb(212, 15, 133);
+  padding: 30px 40px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.welcome-section h1 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-section p {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 400;
+  opacity: 0.95;
+}
+
+/* Header Section */
+.seller-dashboard-header {
+  background: rgb(212, 15, 133);
+  padding: 20px 40px;
+  border-bottom: 2px solid #ec4899;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(243, 242, 242, 0.1);
+}
+
+.seller-header-content h1 {
+  color: #f7e8ef;
+  font-size: 2rem;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.seller-header-content p {
+  color: #f4f7fa;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.seller-logout-btn {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+}
+
+.seller-logout-btn:hover {
+  background: linear-gradient(135deg, #db2777, #be185d);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+}
+
+/* Quick Actions */
+.seller-quick-actions {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.seller-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.seller-action-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  border: 2px solid rgba(236, 72, 153, 0.3);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.seller-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
+.seller-action-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #ec4899;
+}
+
+/* Icons with original colors */
+.seller-action-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  /* Remove gradient background and use original colors */
+  color: inherit; /* This will use the icon's original color */
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+  filter: none;
+}
+
+/* If you want specific colors for different icons, you can add classes like: */
+.seller-action-icon.dogs {
+  color: #8B4513; /* Brown for dogs */
+}
+
+.seller-action-icon.products {
+  color: #2E8B57; /* Sea green for products */
+}
+
+.seller-action-icon.orders {
+  color: #1E90FF; /* Dodger blue for orders */
+}
+
+.seller-action-icon.analytics {
+  color: #FF6347; /* Tomato red for analytics */
+}
+
+.seller-action-card h3 {
+  color: #db2777;
+  font-size: 1.5rem;
+  margin: 0 0 15px 0;
+  font-weight: 700;
+}
+
+.seller-action-card p {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Loading State */
+.loading-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: white;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ec4899;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .seller-actions-grid {
+    gap: 25px;
+  }
+  
+  .seller-action-card {
+    padding: 35px 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-section {
+    padding: 25px 20px;
+  }
+  
+  .welcome-section h1 {
+    font-size: 2rem;
+  }
+  
+  .welcome-section p {
+    font-size: 1.1rem;
+  }
+  
+  .seller-dashboard-header {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .seller-header-content h1 {
+    font-size: 1.6rem;
+  }
+  
+  .seller-quick-actions {
+    padding: 25px 20px;
+  }
+  
+  .seller-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 500px;
+  }
+  
+  .seller-action-card {
+    padding: 30px 25px;
+  }
+  
+  .seller-action-icon {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-section {
+    padding: 20px 15px;
+  }
+  
+  .welcome-section h1 {
+    font-size: 1.8rem;
+  }
+  
+  .welcome-section p {
+    font-size: 1rem;
+  }
+  
+  .seller-quick-actions {
+    padding: 20px 15px;
+  }
+  
+  .seller-header-content h1 {
+    font-size: 1.4rem;
+  }
+  
+  .seller-action-card {
+    padding: 25px 20px;
+  }
+  
+  .seller-action-icon {
+    font-size: 2.5rem;
+  }
+  
+  .seller-action-card h3 {
+    font-size: 1.3rem;
+  }
+}

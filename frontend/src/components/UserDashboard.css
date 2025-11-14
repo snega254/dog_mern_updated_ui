@@ -1,0 +1,233 @@
+/* UserDashboard.css - Purple Theme - Perfect Fit */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Header Section - Compact */
+.dashboard-header {
+  background: rgba(109, 119, 234, 0.95);
+  padding: 15px 40px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* CHANGE: Make both header texts white */
+.header-content h1 {
+  color: white !important;
+  font-size: 1.8rem;
+  margin: 0 0 3px 0;
+  font-weight: 700;
+}
+
+.header-content p {
+  color: white !important; /* Changed to white */
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.logout-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+  background: #c53030;
+}
+
+/* Main Content - Centered and compact */
+.dashboard-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Quick Actions - Perfect grid layout */
+.quick-actions {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  width: 100%;
+}
+
+.action-card {
+  background: white;
+  padding: 25px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid #8b5cf6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 220px;
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  color: #8b5cf6;
+}
+
+.action-card h3 {
+  color: #1e293b;
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.action-card p {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.action-btn {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  max-width: 140px;
+  margin: 0 auto;
+  transition: background 0.3s;
+  font-size: 0.85rem;
+}
+
+.action-btn:hover {
+  background: #7c3aed;
+}
+
+/* Loading State */
+.loading-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 100vw;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #8b5cf6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .dashboard-content {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 12px 25px;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .header-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .dashboard-content {
+    padding: 20px;
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .action-card {
+    height: 200px;
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 10px 20px;
+  }
+  
+  .header-content h1 {
+    font-size: 1.3rem;
+  }
+  
+  .dashboard-content {
+    padding: 15px;
+  }
+  
+  .action-card {
+    height: 180px;
+    padding: 15px 12px;
+  }
+  
+  .action-icon {
+    font-size: 2rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1.1rem;
+  }
+}

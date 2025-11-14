@@ -16,15 +16,17 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.0",
+    "mongoose": "^8.19.2",
     "multer": "^2.0.2",
+    "razorpay": "^2.9.6",
     "react-toastify": "^11.0.5",
     "shadcn-ui": "^0.9.5",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "uuid": "^13.0.0"
   }
 }

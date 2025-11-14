@@ -1,106 +1,243 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './DogDetails.css';
 
 const DogDetails = () => {
   const { dogId } = useParams();
+  const navigate = useNavigate();
   const [dog, setDog] = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [showAdoptModal, setShowAdoptModal] = useState(false);
+  const [adoptionMessage, setAdoptionMessage] = useState('');
+  const [adopting, setAdopting] = useState(false);
 
   useEffect(() => {
-    const fetchDog = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/dogs/${dogId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setDog(res.data);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load dog details.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDog();
+    fetchDogDetails();
   }, [dogId]);
 
-  const handleAdopt = () => setShowConfirm(true);
-
-  const handleConfirmAdopt = async () => {
-    const token = localStorage.getItem('token');
+  const fetchDogDetails = async () => {
     try {
-      await axios.post(
-        'http://localhost:5000/api/orders',
-        { dogId: dog._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert('Adoption request sent!');
-      navigate('/adoption');
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:5000/api/dogs/${dogId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDog(response.data);
+      setLoading(false);
     } catch (err) {
-      console.error(err);
-      alert('Error sending adoption request.');
-    } finally {
-      setShowConfirm(false);
+      console.error('Error fetching dog details:', err);
+      setError('Failed to load dog details. Please try again.');
+      setLoading(false);
     }
   };
 
-  const handleCancelAdopt = () => setShowConfirm(false);
+  const handleAdopt = async () => {
+    if (!adoptionMessage.trim()) {
+      alert('Please add a message for the seller');
+      return;
+    }
 
-  if (loading) return <div>Loading dog details...</div>;
-  if (error) return <div>{error}</div>;
-  if (!dog) return <div>No dog found.</div>;
+    setAdopting(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/orders', 
+        { 
+          dogId: dog._id, 
+          message: adoptionMessage 
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert('Adoption request sent successfully! The seller will contact you soon.');
+      setShowAdoptModal(false);
+      navigate('/adoption');
+    } catch (err) {
+      console.error('Error sending adoption request:', err);
+      alert(err.response?.data?.message || 'Failed to send adoption request. Please try again.');
+    } finally {
+      setAdopting(false);
+    }
+  };
+
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+      <p>Loading dog details...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-container">
+      <div className="error-message">{error}</div>
+      <button onClick={() => navigate('/adoption')} className="back-btn">
+        Back to Adoption
+      </button>
+    </div>
+  );
+
+  if (!dog) return (
+    <div className="error-container">
+      <div className="error-message">Dog not found</div>
+      <button onClick={() => navigate('/adoption')} className="back-btn">
+        Back to Adoption
+      </button>
+    </div>
+  );
 
   return (
-    <div className="adoption-page">
-      <h1>Dog Details</h1>
-      <div className="dog-card" style={{ textAlign: 'center' }}>
-        <div
-          style={{
-            width: '200px',
-            height: '160px',
-            overflow: 'hidden',
-            margin: '0 auto 10px',
-            borderRadius: '8px',
-            backgroundColor: '#f0f0f0',
-          }}
-        >
+    <div className="dog-details-container">
+      <button onClick={() => navigate('/adoption')} className="back-btn">
+        ← Back to Dogs
+      </button>
+
+      <div className="dog-details-content">
+        {/* Dog Images */}
+        <div className="dog-images">
           <img
-            src={
-              dog.image
-                ? dog.image // ✅ Use the backend URL directly
-                : 'http://localhost:5000/uploads/placeholder-image.jpg'
-            }
+            src={dog.image || 'http://localhost:5000/uploads/placeholder-dog.jpg'}
             alt={dog.breed}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            className="main-dog-image"
             onError={(e) => {
-              e.target.src = 'http://localhost:5000/uploads/placeholder-image.jpg';
+              e.target.src = 'http://localhost:5000/uploads/placeholder-dog.jpg';
             }}
           />
+          {dog.isAdopted && (
+            <div className="adopted-overlay">
+              <div className="adopted-text">Already Adopted</div>
+            </div>
+          )}
         </div>
-        <h3>{dog.breed}</h3>
-        <p><strong>Dog ID:</strong> {dog.dogId}</p>
-        <p><strong>Age:</strong> {dog.age}</p>
-        <p><strong>Gender:</strong> {dog.gender}</p>
-        <p><strong>Type:</strong> {dog.dogType}</p>
-        <p><strong>Health:</strong> {dog.healthStatus}</p>
-        <p><strong>Vaccinated:</strong> {dog.vaccinated}</p>
-        <p><strong>Size:</strong> {dog.size}</p>
-        <p><strong>Color:</strong> {dog.color}</p>
-        <p><strong>Behavior:</strong> {dog.behavior}</p>
-        <button onClick={handleAdopt}>Adopt Me</button>
+
+        {/* Dog Information */}
+        <div className="dog-info">
+          <div className="dog-header">
+            <h1>{dog.dogId}</h1>
+            <div className="dog-breed">{dog.breed}</div>
+            {dog.isAdopted && (
+              <div className="status-badge adopted">Adopted</div>
+            )}
+            {!dog.isAdopted && dog.price > 0 && (
+              <div className="price-tag">₹{dog.price}</div>
+            )}
+          </div>
+
+          <div className="dog-description">
+            <p>{dog.description || 'A lovely dog looking for a forever home.'}</p>
+          </div>
+
+          {/* Key Details */}
+          <div className="details-grid">
+            <div className="detail-item">
+              <span className="detail-label">Age</span>
+              <span className="detail-value">{dog.age}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Gender</span>
+              <span className="detail-value">{dog.gender}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Size</span>
+              <span className="detail-value">{dog.size}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Color</span>
+              <span className="detail-value">{dog.color}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Type</span>
+              <span className="detail-value">{dog.dogType}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Vaccinated</span>
+              <span className="detail-value">{dog.vaccinated}</span>
+            </div>
+          </div>
+
+          {/* Health & Behavior */}
+          <div className="info-sections">
+            <div className="info-section">
+              <h3>Health Status</h3>
+              <div className="health-status">
+                <span className={`status-indicator ${dog.healthStatus.toLowerCase()}`}>
+                  {dog.healthStatus}
+                </span>
+              </div>
+            </div>
+
+            <div className="info-section">
+              <h3>Behavior</h3>
+              <p>{dog.behavior}</p>
+            </div>
+
+            <div className="info-section">
+              <h3>Location</h3>
+              <div className="location-info">
+                <span className="location-icon">📍</span>
+                <span>{dog.location?.city || 'Unknown Location'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Seller Information */}
+          {dog.seller && (
+            <div className="seller-info">
+              <h3>Seller Information</h3>
+              <div className="seller-details">
+                <div className="seller-name">{dog.seller.name}</div>
+                <div className="seller-contact">
+                  <span>📧 {dog.seller.email}</span>
+                  {dog.seller.contact && <span>📞 {dog.seller.contact}</span>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Adoption Button */}
+          {!dog.isAdopted && (
+            <div className="adoption-actions">
+              <button
+                onClick={() => setShowAdoptModal(true)}
+                className="adopt-btn primary-btn"
+              >
+                🏠 Adopt {dog.dogId}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {showConfirm && (
-        <div className="modal">
+      {/* Adoption Modal */}
+      {showAdoptModal && (
+        <div className="modal-overlay">
           <div className="modal-content">
-            <p>Confirm adoption of <strong>{dog.breed}</strong>?</p>
-            <button onClick={handleConfirmAdopt}>Yes</button>
-            <button onClick={handleCancelAdopt}>No</button>
+            <h2>Adopt {dog.dogId}</h2>
+            <p>Send a message to the seller about why you'd like to adopt this dog:</p>
+            
+            <textarea
+              value={adoptionMessage}
+              onChange={(e) => setAdoptionMessage(e.target.value)}
+              placeholder="Tell the seller about your home, experience with dogs, and why you'd be a good fit..."
+              rows="6"
+              className="message-textarea"
+            />
+
+            <div className="modal-actions">
+              <button
+                onClick={() => setShowAdoptModal(false)}
+                className="cancel-btn"
+                disabled={adopting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAdopt}
+                className="confirm-btn"
+                disabled={adopting || !adoptionMessage.trim()}
+              >
+                {adopting ? 'Sending Request...' : 'Send Adoption Request'}
+              </button>
+            </div>
           </div>
         </div>
       )}

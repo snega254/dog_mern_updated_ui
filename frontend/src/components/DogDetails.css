@@ -1,0 +1,396 @@
+.dog-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.back-btn {
+  background: var(--gray);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 30px;
+  transition: var(--transition);
+}
+
+.back-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.dog-details-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* Dog Images */
+.dog-images {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+}
+
+.main-dog-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adopted-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adopted-text {
+  background: var(--danger);
+  color: white;
+  padding: 20px 40px;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Dog Information */
+.dog-info {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.dog-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.dog-header h1 {
+  font-size: 2.5rem;
+  color: var(--dark);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.dog-breed {
+  font-size: 1.4rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.status-badge.adopted {
+  background: var(--danger);
+  color: white;
+}
+
+.price-tag {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--success);
+  margin-top: 10px;
+}
+
+.dog-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--gray);
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: var(--light);
+  border-radius: 10px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.detail-value {
+  font-weight: 500;
+  color: var(--gray);
+}
+
+/* Info Sections */
+.info-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.health-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-indicator {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.status-indicator.healthy {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-indicator.needs-care {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-indicator.sick {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.location-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--gray);
+}
+
+.location-icon {
+  font-size: 1.2rem;
+}
+
+/* Seller Information */
+.seller-info {
+  background: var(--light);
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary);
+}
+
+.seller-info h3 {
+  margin-bottom: 15px;
+  color: var(--dark);
+}
+
+.seller-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seller-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--dark);
+}
+
+.seller-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--gray);
+}
+
+/* Adoption Actions */
+.adoption-actions {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.adopt-btn {
+  width: 100%;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+  margin-bottom: 15px;
+  color: var(--dark);
+  text-align: center;
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+  color: var(--gray);
+  text-align: center;
+}
+
+.message-textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: var(--transition);
+}
+
+.message-textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancel-btn {
+  background: var(--gray);
+  color: white;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.confirm-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.confirm-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .dog-details-content {
+    grid-template-columns: 1fr;
+  }
+
+  .dog-images {
+    height: 400px;
+  }
+
+  .dog-info {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dog-details-container {
+    padding: 15px;
+  }
+
+  .dog-header h1 {
+    font-size: 2rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dog-info {
+    padding: 25px;
+  }
+
+  .modal-content {
+    padding: 25px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .dog-images {
+    height: 300px;
+  }
+
+  .dog-info {
+    padding: 20px;
+  }
+
+  .dog-header h1 {
+    font-size: 1.8rem;
+  }
+}
