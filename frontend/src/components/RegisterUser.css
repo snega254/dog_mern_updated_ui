@@ -1,150 +1,141 @@
-/* RegisterSeller.css */
-.register-seller-container {
+/* RegisterUser.css - Fully Visible at 100% Zoom */
+.register-user-container {
   min-height: 100vh;
+  background: linear-gradient(rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85)),
+              url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover fixed;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   padding: 20px;
   position: relative;
-  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
-.register-seller-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
-  opacity: 0.1;
-}
-
-.register-seller-form {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  padding: 50px 40px;
-  border-radius: 25px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+.register-user-form {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(5px);
+  padding: 30px 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 450px;
-  position: relative;
-  z-index: 2;
+  max-width: 380px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  transform: translateY(0);
-  transition: transform 0.3s ease;
+  box-sizing: border-box;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
-.register-seller-form:hover {
-  transform: translateY(-5px);
-}
-
-.register-seller-header {
+.register-user-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 
-.register-seller-header h2 {
+.register-user-header h2 {
   color: #2d3748;
-  font-size: 2.2rem;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 6px;
   font-weight: 700;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
+  background: linear-gradient(135deg, #667eea, #764ba2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.register-seller-header p {
+.register-user-header p {
   color: #718096;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   margin: 0;
-  font-weight: 300;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
-.seller-register-form-group {
-  margin-bottom: 25px;
+.user-register-form-group {
+  margin-bottom: 16px;
 }
 
-.seller-register-form-group label {
+.user-register-form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color: #4a5568;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
-.seller-register-form-group input {
+.user-register-form-group input {
   width: 100%;
-  padding: 15px 20px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
   background: white;
   box-sizing: border-box;
+  color: #2d3748;
 }
 
-.seller-register-form-group input:focus {
+.user-register-form-group input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.user-register-form-group input:focus {
   outline: none;
-  border-color: #f093fb;
-  box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.1);
-  transform: translateY(-2px);
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
-.seller-register-form-group input:disabled {
+.user-register-form-group input:disabled {
   background-color: #f7fafc;
   opacity: 0.7;
 }
 
-.seller-register-error-message {
+.user-register-error-message {
   background: linear-gradient(135deg, #fed7d7, #feb2b2);
   color: #c53030;
-  padding: 15px 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  border-left: 4px solid #e53e3e;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border-left: 3px solid #e53e3e;
   font-weight: 500;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
-.seller-register-btn {
+.user-register-btn {
   width: 100%;
-  padding: 18px;
+  padding: 12px;
   border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 8px;
   color: white;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
-  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-.seller-register-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(245, 87, 108, 0.5);
-}
-
-.seller-register-btn:active {
+.user-register-btn:hover:not(:disabled) {
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-.seller-register-btn:disabled {
+.user-register-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
 }
 
-.seller-register-spinner {
-  width: 20px;
-  height: 20px;
+.user-register-spinner {
+  width: 16px;
+  height: 16px;
   border: 2px solid transparent;
   border-top: 2px solid white;
   border-radius: 50%;
@@ -156,62 +147,65 @@
   100% { transform: rotate(360deg); }
 }
 
-.seller-register-footer {
+.user-register-footer {
   text-align: center;
-  margin-top: 30px;
-  padding-top: 25px;
+  margin-top: 20px;
+  padding-top: 15px;
   border-top: 1px solid #e2e8f0;
 }
 
-.seller-register-footer p {
-  margin: 12px 0;
+.user-register-footer p {
+  margin: 8px 0;
   color: #718096;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  line-height: 1.3;
 }
 
-.seller-register-link {
-  color: #f5576c;
+.user-register-link {
+  color: #667eea;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s ease;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
 }
 
-.seller-register-link:hover {
-  color: #f093fb;
+.user-register-link:hover {
+  color: #764ba2;
   text-decoration: underline;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .register-seller-container {
-    padding: 15px;
-  }
-  
-  .register-seller-form {
-    padding: 40px 30px;
-    margin: 20px;
-  }
-  
-  .register-seller-header h2 {
-    font-size: 1.8rem;
-  }
+/* Hide scrollbar for Chrome, Safari and Opera */
+.register-user-form::-webkit-scrollbar {
+  display: none;
 }
 
+/* Hide scrollbar for IE, Edge and Firefox */
+.register-user-form {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Responsive Design */
 @media (max-width: 480px) {
-  .register-seller-form {
-    padding: 30px 20px;
-  }
-  
-  .register-seller-header h2 {
-    font-size: 1.6rem;
-  }
-  
-  .seller-register-form-group input {
-    padding: 12px 15px;
-  }
-  
-  .seller-register-btn {
+  .register-user-container {
     padding: 15px;
-    font-size: 1rem;
+  }
+  
+  .register-user-form {
+    padding: 25px 20px;
+    max-width: 350px;
+  }
+  
+  .register-user-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .user-register-form-group input {
+    padding: 9px 11px;
+  }
+  
+  .user-register-btn {
+    padding: 11px;
+    font-size: 0.9rem;
   }
 }
