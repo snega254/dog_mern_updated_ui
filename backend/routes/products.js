@@ -3,7 +3,6 @@ const router = express.Router();
 const Product = require('../models/Product');
 const multer = require('multer');
 const path = require('path');
-const mongoose = require('mongoose');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -28,7 +27,7 @@ const upload = multer({
   }
 });
 
-// Get all products with filters
+// Public routes - no authentication required
 router.get('/', async (req, res) => {
   try {
     const { category, search, minPrice, maxPrice, sort, brand } = req.query;
@@ -66,7 +65,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get product categories and brands
+// Public route - get categories and brands
 router.get('/categories/all', async (req, res) => {
   try {
     const categories = await Product.distinct('category', { isActive: true });
@@ -78,39 +77,63 @@ router.get('/categories/all', async (req, res) => {
   }
 });
 
-// Get seller's products
-router.get('/seller/my-products', async (req, res) => {
+// Public route - get product by ID
+router.get('/:productId', async (req, res) => {
   try {
-    const sellerId = req.user.userId;
-    console.log('🔍 Fetching products for seller:', sellerId);
+    const { productId } = req.params;
+    const product = await Product.findOne({ _id: productId, isActive: true })
+      .populate('sellerId', 'name email');
     
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.json(product);
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    res.status(500).json({ message: 'Error fetching product', error: error.message });
+  }
+});
+
+// Protected routes - require authentication
+const authenticate = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Malformed token' });
+    }
+    
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+};
+
+// Get seller's products - PROTECTED
+router.get('/seller/my-products', authenticate, async (req, res) => {
+  try {
+    const sellerId = req.user.id;
     const products = await Product.find({ sellerId, isActive: true }).sort({ createdAt: -1 });
-    console.log(`✅ Found ${products.length} products for seller ${sellerId}`);
-    
     res.json(products);
   } catch (error) {
-    console.error('❌ Error fetching seller products:', error);
+    console.error('Error fetching seller products:', error);
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
 });
 
-// Create new product - SINGLE VERSION
-router.post('/', upload.single('image'), async (req, res) => {
+// Create new product - PROTECTED
+router.post('/', authenticate, upload.single('image'), async (req, res) => {
   try {
-    console.log('🆕 === PRODUCT CREATION REQUEST START ===');
-    console.log('📝 Request body:', req.body);
-    console.log('📁 File received:', req.file ? `Yes - ${req.file.filename}` : 'No');
-    console.log('👤 Full User object:', req.user);
-    
-    // Check authentication
-    if (!req.user || !req.user.userId) {
-      console.log('❌ No user authentication found');
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ message: 'User authentication required' });
     }
     
-    const sellerId = req.user.userId;
-    console.log('🔑 Using sellerId:', sellerId);
-    
+    const sellerId = req.user.id;
     const { name, description, price, category, brand, stock, material, size, weight, color } = req.body;
 
     // Validation
@@ -144,17 +167,8 @@ router.post('/', upload.single('image'), async (req, res) => {
       productData.specifications = specifications;
     }
 
-    // Generate productId
-    const productCount = await Product.countDocuments();
-    const productId = `PROD${(productCount + 1).toString().padStart(4, '0')}`;
-    productData.productId = productId;
-    
-    console.log('📦 Final product data:', productData);
-
     const product = new Product(productData);
     await product.save();
-    
-    console.log('✅ Product created successfully:', product.productId);
     
     res.status(201).json({ 
       message: 'Product created successfully', 
@@ -169,7 +183,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ Error creating product:', error);
+    console.error('Error creating product:', error);
     
     if (error.name === 'ValidationError') {
       const errors = {};
@@ -179,19 +193,15 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'Product validation failed', errors });
     }
     
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Product with this ID already exists' });
-    }
-    
     res.status(500).json({ message: 'Error creating product', error: error.message });
   }
 });
 
-// Update product
-router.put('/:productId', upload.single('image'), async (req, res) => {
+// Update product - PROTECTED
+router.put('/:productId', authenticate, upload.single('image'), async (req, res) => {
   try {
     const { productId } = req.params;
-    const sellerId = req.user.userId;
+    const sellerId = req.user.id;
     
     const product = await Product.findOne({ _id: productId, sellerId });
     if (!product) {
@@ -203,14 +213,19 @@ router.put('/:productId', upload.single('image'), async (req, res) => {
 
     if (req.body.material || req.body.size || req.body.weight || req.body.color) {
       updateData.specifications = {
-        material: req.body.material || '',
-        size: req.body.size || '',
-        weight: req.body.weight || '',
-        color: req.body.color || ''
+        material: req.body.material || product.specifications?.material || '',
+        size: req.body.size || product.specifications?.size || '',
+        weight: req.body.weight || product.specifications?.weight || '',
+        color: req.body.color || product.specifications?.color || ''
       };
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(productId, updateData, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId, 
+      updateData, 
+      { new: true, runValidators: true }
+    );
+    
     res.json({ message: 'Product updated successfully', product: updatedProduct });
   } catch (error) {
     console.error('Error updating product:', error);
@@ -218,11 +233,11 @@ router.put('/:productId', upload.single('image'), async (req, res) => {
   }
 });
 
-// Delete product
-router.delete('/:productId', async (req, res) => {
+// Delete product - PROTECTED
+router.delete('/:productId', authenticate, async (req, res) => {
   try {
     const { productId } = req.params;
-    const sellerId = req.user.userId;
+    const sellerId = req.user.id;
     
     const product = await Product.findOne({ _id: productId, sellerId });
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -235,18 +250,20 @@ router.delete('/:productId', async (req, res) => {
   }
 });
 
-// Get product by ID
-router.get('/:productId', async (req, res) => {
+module.exports = router;router.post('/', authenticate, upload.single('image'), async (req, res) => {
   try {
-    const { productId } = req.params;
-    const product = await Product.findOne({ _id: productId, isActive: true }).populate('sellerId', 'name email');
+    console.log('🔐 Authentication check - User:', req.user);
+    console.log('📦 Request body:', req.body);
+    console.log('🖼️ File:', req.file);
     
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.json(product);
+    if (!req.user || !req.user.id) {
+      console.log('❌ No user found in request');
+      return res.status(401).json({ message: 'User authentication required' });
+    }
+    
+    // Rest of your code...
   } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({ message: 'Error fetching product', error: error.message });
+    console.error('💥 Error in POST /api/products:', error);
+    res.status(500).json({ message: 'Error creating product', error: error.message });
   }
 });
-
-module.exports = router;

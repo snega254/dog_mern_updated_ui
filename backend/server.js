@@ -8,13 +8,8 @@ const path = require('path');
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const apiRoutes = require('./routes/api');
 const productRoutes = require('./routes/products');
-const orderRoutes = require('./routes/orders');
 const accessoryOrderRoutes = require('./routes/accessoryOrders');
-const doctorRoutes = require('./routes/doctors');
-const postRoutes = require('./routes/posts');
-const healthRoutes = require('./routes/health');
 
 const app = express();
 const server = http.createServer(app);
@@ -95,13 +90,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/api', authenticate, apiRoutes);
-app.use('/api/products', authenticate, productRoutes);
-app.use('/api/orders', authenticate, orderRoutes);
+app.use('/api/products',productRoutes);
 app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
-app.use('/api/doctors', authenticate, doctorRoutes);
-app.use('/api/posts', authenticate, postRoutes);
-app.use('/api/health', authenticate, healthRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -111,15 +101,6 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
   });
-});
-
-// Placeholder images
-app.get('/uploads/placeholder-dog.jpg', (req, res) => {
-  res.sendFile(path.join(__dirname, 'uploads', 'placeholder-dog.jpg'));
-});
-
-app.get('/uploads/placeholder-product.jpg', (req, res) => {
-  res.sendFile(path.join(__dirname, 'uploads', 'placeholder-product.jpg'));
 });
 
 // Error handler
@@ -142,5 +123,4 @@ server.listen(PORT, () => {
   console.log(`💻 Web app URL: http://localhost:3000`);
   console.log(`🔗 API URL: http://localhost:${PORT}`);
   console.log(`🕒 Started at: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`);
-  console.log('📝 Seed database with: npm run seed');
 });

@@ -4,7 +4,6 @@ const productSchema = new mongoose.Schema({
   productId: {
     type: String,
     unique: true
-    // Remove required since we're generating it manually
   },
   name: {
     type: String,
@@ -58,18 +57,15 @@ const productSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Keep the pre-save hook as backup
+// Generate product ID before saving
 productSchema.pre('save', async function(next) {
   try {
-    // Only generate productId if it doesn't exist
     if (!this.productId) {
       const count = await mongoose.model('Product').countDocuments();
       this.productId = `PROD${(count + 1).toString().padStart(4, '0')}`;
-      console.log(`✅ Auto-generated productId: ${this.productId}`);
     }
     next();
   } catch (error) {
-    console.error('❌ Error generating productId:', error);
     next(error);
   }
 });
