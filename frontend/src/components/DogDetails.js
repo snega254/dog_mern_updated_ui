@@ -114,12 +114,14 @@ const DogDetails = () => {
           <div className="dog-header">
             <h1>{dog.dogId}</h1>
             <div className="dog-breed">{dog.breed}</div>
-            {dog.isAdopted && (
-              <div className="status-badge adopted">Adopted</div>
-            )}
-            {!dog.isAdopted && dog.price > 0 && (
-              <div className="price-tag">₹{dog.price}</div>
-            )}
+            <div className="status-container">
+              {dog.isAdopted && (
+                <div className="status-badge adopted">Adopted</div>
+              )}
+              {!dog.isAdopted && dog.price > 0 && (
+                <div className="price-tag">₹{dog.price}</div>
+              )}
+            </div>
           </div>
 
           <div className="dog-description">
@@ -142,15 +144,15 @@ const DogDetails = () => {
             </div>
             <div className="detail-item">
               <span className="detail-label">Color</span>
-              <span className="detail-value">{dog.color}</span>
+              <span className="detail-value">{dog.color || 'Not specified'}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Type</span>
-              <span className="detail-value">{dog.dogType}</span>
+              <span className="detail-value">{dog.dogType || 'Not specified'}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Vaccinated</span>
-              <span className="detail-value">{dog.vaccinated}</span>
+              <span className="detail-value">{dog.vaccinated || 'Not specified'}</span>
             </div>
           </div>
 
@@ -159,15 +161,15 @@ const DogDetails = () => {
             <div className="info-section">
               <h3>Health Status</h3>
               <div className="health-status">
-                <span className={`status-indicator ${dog.healthStatus.toLowerCase()}`}>
-                  {dog.healthStatus}
+                <span className={`status-indicator ${dog.healthStatus?.toLowerCase() || 'healthy'}`}>
+                  {dog.healthStatus || 'Healthy'}
                 </span>
               </div>
             </div>
 
             <div className="info-section">
               <h3>Behavior</h3>
-              <p>{dog.behavior}</p>
+              <p>{dog.behavior || 'Friendly and well-behaved'}</p>
             </div>
 
             <div className="info-section">
@@ -200,7 +202,7 @@ const DogDetails = () => {
                 onClick={() => setShowAdoptModal(true)}
                 className="adopt-btn primary-btn"
               >
-                🏠 Adopt {dog.dogId}
+                🏠 Adopt
               </button>
             </div>
           )}

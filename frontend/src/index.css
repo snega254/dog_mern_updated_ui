@@ -1,4 +1,4 @@
-/* Updated global.css with blue theme */
+/* Minimal global reset */
 * {
   margin: 0;
   padding: 0;
@@ -6,56 +6,13 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f9fa;
+  background: white;
+  color: #333;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-/* Scrollbar styling - CHANGED TO BLUE */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #3b82f6;  /* CHANGED TO BLUE */
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;  /* CHANGED TO BLUE */
-}
-
-/* Selection styling - CHANGED TO BLUE */
-::selection {
-  background-color: #3b82f6;  /* CHANGED TO BLUE */
-  color: white;
-}
-
-/* Focus styles for accessibility - CHANGED TO BLUE */
-button:focus,
-input:focus,
-select:focus,
-textarea:focus {
-  outline: 2px solid #3b82f6;  /* CHANGED TO BLUE */
-  outline-offset: 2px;
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
+html, body, #root {
+  height: 100%;
 }

@@ -17,6 +17,9 @@ import DoctorBooking from './components/DoctorBooking';
 import DogPosts from './components/DogPosts';
 import HealthRecords from './components/HealthRecords';
 import Index from './components/Index';
+// IMPORT THE NEW SELLER COMPONENTS
+import SellerProducts from './components/SellerProducts';
+import SellerOrders from './components/SellerOrders';
 import './App.css';
 
 // Helper to safely decode JWT
@@ -196,6 +199,28 @@ function App() {
             element={
               isAuthenticated && userType === 'seller' ? (
                 <ManageDogOrders />
+              ) : (
+                <Navigate to="/login_seller" />
+              )
+            }
+          />
+          
+          {/* NEW SELLER PRODUCT MANAGEMENT ROUTES */}
+          <Route
+            path="/seller/products"
+            element={
+              isAuthenticated && userType === 'seller' ? (
+                <SellerProducts />
+              ) : (
+                <Navigate to="/login_seller" />
+              )
+            }
+          />
+          <Route
+            path="/seller/orders"
+            element={
+              isAuthenticated && userType === 'seller' ? (
+                <SellerOrders />
               ) : (
                 <Navigate to="/login_seller" />
               )

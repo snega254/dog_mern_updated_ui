@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth');
 const apiRoutes = require('./routes/api');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
+const accessoryOrderRoutes = require('./routes/accessoryOrders');
 const doctorRoutes = require('./routes/doctors');
 const postRoutes = require('./routes/posts');
 const healthRoutes = require('./routes/health');
@@ -92,11 +93,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes (no payment routes)
+// Routes
 app.use('/auth', authRoutes);
 app.use('/api', authenticate, apiRoutes);
 app.use('/api/products', authenticate, productRoutes);
 app.use('/api/orders', authenticate, orderRoutes);
+app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
 app.use('/api/doctors', authenticate, doctorRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/health', authenticate, healthRoutes);
@@ -129,11 +131,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler (fixed for path-to-regexp)
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
-
 
 // Start server
 server.listen(PORT, () => {

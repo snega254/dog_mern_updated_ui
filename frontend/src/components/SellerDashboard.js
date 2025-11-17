@@ -111,13 +111,13 @@ const SellerDashboard = () => {
             <p>Manage adoption requests</p>
           </div>
 
-          <div className="seller-action-card" onClick={() => alert('Product management coming soon!')}>
+          <div className="seller-action-card" onClick={() => navigate('/seller/products')}>
             <div className="seller-action-icon">🛍️</div>
             <h3>Sell Products</h3>
             <p>Add pet accessories</p>
           </div>
 
-          <div className="seller-action-card" onClick={() => alert('Product orders coming soon!')}>
+          <div className="seller-action-card" onClick={() => navigate('/seller/orders')}>
             <div className="seller-action-icon">📦</div>
             <h3>View Product Orders</h3>
             <p>Manage product sales</p>

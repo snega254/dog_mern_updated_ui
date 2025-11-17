@@ -1,48 +1,179 @@
+/* DogDetails.css - Fixed Blue Theme & Scroll */
+:root {
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --secondary: #dbeafe;
+  --dark: #1e3a8a;
+  --light: #eff6ff;
+  --gray: #6b7280;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Ensure proper scrolling */
 .dog-details-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+  overflow-y: auto;
+  height: 100vh;
 }
 
+/* Make content scrollable */
+.dog-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  padding: 0;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* BLUE BUTTONS - FIXED */
 .back-btn {
-  background: var(--gray);
+  background: var(--primary);
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   margin-bottom: 30px;
   transition: var(--transition);
+  font-size: 1rem;
 }
 
 .back-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Adoption Button - BLUE */
+.adopt-btn {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--primary) !important;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+  margin: 0 auto;
+  display: block;
+}
+
+.adopt-btn:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+/* Modal Buttons - BLUE */
+.cancel-btn {
+  background: var(--gray);
+  color: white;
+  border: none !important;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancel-btn:hover:not(:disabled) {
   background: #5a6268;
   transform: translateY(-2px);
 }
 
-.dog-details-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
+.confirm-btn {
+  background: var(--primary) !important;
+  color: white;
+  border: none !important;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background: var(--primary-dark) !important;
+  transform: translateY(-2px);
+}
+
+.confirm-btn:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Ensure all interactive elements are blue */
+.primary-btn {
+  background: var(--primary) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Remove any pink styles that might be overriding */
+button[style*="pink"],
+button[style*="Pink"],
+.btn[style*="pink"],
+.btn[style*="Pink"] {
+  background: var(--primary) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Scrollbar styling */
+.dog-details-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dog-details-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.dog-details-content::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.dog-details-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }
 
 /* Dog Images */
 .dog-images {
   position: relative;
-  height: 600px;
-  overflow: hidden;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  padding: 0;
 }
 
 .main-dog-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #f8fafc;
 }
 
 .adopted-overlay {
@@ -55,6 +186,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2;
 }
 
 .adopted-text {
@@ -65,6 +197,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   text-transform: uppercase;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 /* Dog Information */
@@ -78,6 +211,7 @@
 .dog-header {
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 20px;
+  text-align: center;
 }
 
 .dog-header h1 {
@@ -92,6 +226,14 @@
   color: var(--primary);
   font-weight: 600;
   margin-bottom: 15px;
+}
+
+.status-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .status-badge {
@@ -112,13 +254,21 @@
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--success);
-  margin-top: 10px;
+  background: var(--light);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid var(--success);
 }
 
 .dog-description {
   font-size: 1.1rem;
   line-height: 1.6;
   color: var(--gray);
+  background: var(--light);
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary);
+  text-align: center;
 }
 
 /* Details Grid */
@@ -135,6 +285,12 @@
   padding: 15px;
   background: var(--light);
   border-radius: 10px;
+  transition: var(--transition);
+}
+
+.detail-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .detail-label {
@@ -149,9 +305,16 @@
 
 /* Info Sections */
 .info-sections {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
+}
+
+.info-section {
+  background: var(--light);
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary);
 }
 
 .info-section h3 {
@@ -178,16 +341,19 @@
 .status-indicator.healthy {
   background: #d4edda;
   color: #155724;
+  border: 2px solid #c3e6cb;
 }
 
 .status-indicator.needs-care {
   background: #fff3cd;
   color: #856404;
+  border: 2px solid #ffeaa7;
 }
 
 .status-indicator.sick {
   background: #f8d7da;
   color: #721c24;
+  border: 2px solid #f5c6cb;
 }
 
 .location-info {
@@ -208,6 +374,7 @@
   padding: 20px;
   border-radius: 10px;
   border-left: 4px solid var(--primary);
+  text-align: center;
 }
 
 .seller-info h3 {
@@ -219,6 +386,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
 }
 
 .seller-name {
@@ -232,20 +400,15 @@
   flex-direction: column;
   gap: 5px;
   color: var(--gray);
+  align-items: center;
 }
 
 /* Adoption Actions */
 .adoption-actions {
-  margin-top: auto;
+  margin-top: 20px;
   padding-top: 20px;
   border-top: 2px solid #f0f0f0;
-}
-
-.adopt-btn {
-  width: 100%;
-  padding: 20px;
-  font-size: 1.2rem;
-  font-weight: 700;
+  text-align: center;
 }
 
 /* Modal Styles */
@@ -261,6 +424,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -270,6 +434,18 @@
   max-width: 500px;
   width: 100%;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-content h2 {
@@ -293,12 +469,14 @@
   font-family: inherit;
   resize: vertical;
   transition: var(--transition);
+  background: var(--light);
 }
 
 .message-textarea:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: white;
 }
 
 .modal-actions {
@@ -317,41 +495,61 @@
   transition: var(--transition);
 }
 
-.cancel-btn {
-  background: var(--gray);
-  color: white;
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  margin: 20px;
+  padding: 40px;
 }
 
-.cancel-btn:hover:not(:disabled) {
-  background: #5a6268;
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
 }
 
-.confirm-btn {
-  background: var(--primary);
-  color: white;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.confirm-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
+.loading-container p {
+  color: var(--dark);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.confirm-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.error-message {
+  background: #fef2f2;
+  color: var(--danger);
+  padding: 15px 25px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--danger);
+  max-width: 400px;
+  font-weight: 500;
 }
 
 /* Responsive Design */
 @media (max-width: 968px) {
-  .dog-details-content {
-    grid-template-columns: 1fr;
-  }
-
   .dog-images {
     height: 400px;
   }
-
-  .dog-info {
-    padding: 30px;
+  
+  .info-sections {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -393,4 +591,36 @@
   .dog-header h1 {
     font-size: 1.8rem;
   }
+
+  .status-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .adopt-btn {
+    max-width: 100%;
+  }
+  
+  .dog-details-content {
+    max-height: calc(100vh - 80px);
+  }
+}
+
+/* Additional scroll fixes */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Force blue theme on all states */
+button:focus,
+button:active {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
 }

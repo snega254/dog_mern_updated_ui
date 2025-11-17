@@ -1,4 +1,13 @@
-/* Adoption.css - Blue Theme with Scrollable Layout */
+/* EMERGENCY FIX: REMOVE ALL PINK */
+.adoption-container {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%) !important;
+}
+
+body, html, #root, .App {
+  background: white !important;
+}
+
+/* Adoption.css - Fully Scrollable Version with Blue Theme */
 :root {
   --primary: #3b82f6;
   --primary-light: #60a5fa;
@@ -14,31 +23,26 @@
   --transition: all 0.3s ease;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .adoption-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-  overflow-y: auto;
   position: relative;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 /* Main content area with white background */
 .adoption-main-content {
   background: white;
   border-radius: 20px;
-  margin: 20px;
-  padding: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  min-height: calc(100vh - 40px);
-  overflow-y: auto;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
 }
 
 /* Header Section */
@@ -48,6 +52,7 @@
   background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
   color: white;
   border-radius: 20px 20px 0 0;
+  flex-shrink: 0;
 }
 
 .adoption-header h1 {
@@ -67,6 +72,7 @@
   background: #f8fafc;
   padding: 30px;
   border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .search-container {
@@ -169,6 +175,7 @@
   padding: 20px 30px;
   background: white;
   border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .results-info h3 {
@@ -177,7 +184,7 @@
   font-weight: 600;
 }
 
-/* Dogs Grid - Scrollable Area */
+/* Dogs Grid */
 .dogs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -185,9 +192,10 @@
   padding: 30px;
   background: white;
   border-radius: 0 0 20px 20px;
-  overflow-y: auto;
-  max-height: calc(100vh - 400px);
-  min-height: 400px;
+  flex: 1;
+  overflow-y: visible;
+  max-height: none;
+  min-height: auto;
 }
 
 .dog-card {
@@ -309,6 +317,7 @@
   gap: 10px;
 }
 
+/* BLUE THEME BUTTONS */
 .primary-btn {
   flex: 1;
   background: var(--primary);
@@ -333,6 +342,22 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.retry-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.retry-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 /* No Results */
@@ -410,59 +435,25 @@
   font-weight: 500;
 }
 
-.retry-btn {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.retry-btn:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-/* Custom Scrollbar for Dogs Grid */
-.dogs-grid::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dogs-grid::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
-}
-
-.dogs-grid::-webkit-scrollbar-thumb {
-  background: var(--primary-light);
-  border-radius: 10px;
-}
-
-.dogs-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
-
-/* Custom Scrollbar for Main Container */
+/* Custom Scrollbar for entire page */
 .adoption-container::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
+  display: block !important;
 }
 
 .adoption-container::-webkit-scrollbar-track {
-  background: #1e3a8a;
-  border-radius: 10px;
+  background: #3b82f6;
+    border-radius: 10px;
 }
 
 .adoption-container::-webkit-scrollbar-thumb {
-  background: var(--primary);
+  background: #2563eb ;
   border-radius: 10px;
-  border: 2px solid #1e3a8a;
+  border: 2px solid #f1f5f9;
 }
 
 .adoption-container::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
+  background: var(--primary);
 }
 
 /* Smooth scrolling */
@@ -470,27 +461,16 @@ html {
   scroll-behavior: smooth;
 }
 
-.adoption-container {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Add some breathing room at the bottom */
-.adoption-container::after {
-  content: '';
-  display: block;
-  height: 40px;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .adoption-container {
     padding: 10px;
-    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
   }
   
   .adoption-main-content {
-    margin: 10px;
-    min-height: calc(100vh - 20px);
+    min-height: auto;
   }
 
   .adoption-header {
@@ -518,7 +498,6 @@ html {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 20px;
-    max-height: none;
   }
 
   .dog-image-container {
@@ -559,17 +538,8 @@ html {
   .dog-info {
     padding: 15px;
   }
-}
-
-/* Ensure proper scrolling on mobile */
-@media (max-width: 768px) {
-  .adoption-container {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
   
-  .dogs-grid {
-    overflow-y: visible;
-    max-height: none;
+  .adoption-container {
+    padding: 5px;
   }
 }

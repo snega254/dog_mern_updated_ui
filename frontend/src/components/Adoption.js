@@ -104,190 +104,190 @@ const Adoption = () => {
 
   return (
     <div className="adoption-container">
-      {/* Header Section */}
-      <header className="adoption-header">
-        <div className="header-content">
-          <h1>Find Your Perfect Companion</h1>
-          <p>Browse adorable dogs waiting for their forever homes.</p>
-        </div>
-      </header>
-
-      {/* Search and Filters Section */}
-      <section className="filters-section">
-        <div className="search-container">
-          <div className="search-input-wrapper">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by breed or dog ID..."
-              className="search-input"
-            />
-            <span className="search-icon">🔍</span>
+      <div className="adoption-main-content">
+        {/* Header Section */}
+        <header className="adoption-header">
+          <div className="header-content">
+            <h1>Find Your Perfect Companion</h1>
+            <p>Browse adorable dogs waiting for their forever homes.</p>
           </div>
-        </div>
+        </header>
 
-        <div className="filters-grid">
-          <div className="filter-group">
-            <label>Breed</label>
-            <select 
-              value={filters.breed} 
-              onChange={(e) => handleFilterChange('breed', e.target.value)}
-              className="filter-select"
-            >
-              {breedOptions.map(breed => (
-                <option key={breed} value={breed}>
-                  {breed === 'all' ? 'All Breeds' : breed}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Age</label>
-            <select 
-              value={filters.age} 
-              onChange={(e) => handleFilterChange('age', e.target.value)}
-              className="filter-select"
-            >
-              {ageOptions.map(age => (
-                <option key={age} value={age}>
-                  {age === 'all' ? 'All Ages' : age}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Gender</label>
-            <select 
-              value={filters.gender} 
-              onChange={(e) => handleFilterChange('gender', e.target.value)}
-              className="filter-select"
-            >
-              {genderOptions.map(gender => (
-                <option key={gender} value={gender}>
-                  {gender === 'all' ? 'All Genders' : gender}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Size</label>
-            <select 
-              value={filters.size} 
-              onChange={(e) => handleFilterChange('size', e.target.value)}
-              className="filter-select"
-            >
-              {sizeOptions.map(size => (
-                <option key={size} value={size}>
-                  {size === 'all' ? 'All Sizes' : size}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Location</label>
-            <select 
-              value={filters.location} 
-              onChange={(e) => handleFilterChange('location', e.target.value)}
-              className="filter-select"
-            >
-              {locationOptions.map(location => (
-                <option key={location} value={location}>
-                  {location === 'all' ? 'All Locations' : location}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button className="clear-filters-btn" onClick={clearFilters}>
-            Clear Filters
-          </button>
-        </div>
-      </section>
-
-      {/* Results Count */}
-      <div className="results-info">
-        <h3>
-          {filteredDogs.length} {filteredDogs.length === 1 ? 'dog' : 'dogs'} found
-        </h3>
-      </div>
-
-      {/* Dogs Grid */}
-      <section className="dogs-grid">
-        {filteredDogs.length > 0 ? (
-          filteredDogs.map(dog => (
-            <div key={dog._id} className="dog-card">
-              <div className="dog-image-container">
-                <img
-                  src={dog.image || 'http://localhost:5000/uploads/placeholder-dog.jpg'}
-                  alt={dog.breed}
-                  className="dog-image"
-                  onError={(e) => {
-                    e.target.src = 'http://localhost:5000/uploads/placeholder-dog.jpg';
-                  }}
-                />
-                {dog.isAdopted && (
-                  <div className="adopted-badge">Adopted</div>
-                )}
-              </div>
-              
-              <div className="dog-info">
-                <h3 className="dog-name">{dog.breed}</h3>
-                {dog.dogId && (
-                  <p className="dog-id-subtle">ID: {dog.dogId}</p>
-                )}
-                
-                <div className="dog-details">
-                  <div className="detail-item">
-                    <span className="detail-icon">🎂</span>
-                    <span>{dog.age}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">{dog.gender === 'Male' ? '♂' : '♀'}</span>
-                    <span>{dog.gender}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">📏</span>
-                    <span>{dog.size}</span>
-                  </div>
-                </div>
-
-                <div className="dog-location">
-                  <span className="location-icon">📍</span>
-                  <span>{dog.location?.city || 'Unknown Location'}</span>
-                </div>
-
-                {dog.description && (
-                  <p className="dog-description">{dog.description}</p>
-                )}
-
-                <div className="dog-actions">
-                  <button
-                    onClick={() => handleViewDetails(dog._id)}
-                    className="primary-btn"
-                    disabled={dog.isAdopted}
-                  >
-                    {dog.isAdopted ? 'Already Adopted' : 'View Details'}
-                  </button>
-                </div>
-              </div>
+        {/* Search and Filters Section */}
+        <section className="filters-section">
+          <div className="search-container">
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by breed or dog ID..."
+                className="search-input"
+              />
+              <span className="search-icon">🔍</span>
             </div>
-          ))
-        ) : (
-          <div className="no-results">
-            <div className="no-results-icon">😔</div>
-            <h3>No dogs found</h3>
-            <p>Try adjusting your search or filters</p>
-            <button onClick={clearFilters} className="clear-filters-btn">
-              Clear All Filters
+          </div>
+
+          <div className="filters-grid">
+            <div className="filter-group">
+              <label>Breed</label>
+              <select 
+                value={filters.breed} 
+                onChange={(e) => handleFilterChange('breed', e.target.value)}
+                className="filter-select"
+              >
+                {breedOptions.map(breed => (
+                  <option key={breed} value={breed}>
+                    {breed === 'all' ? 'All Breeds' : breed}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Age</label>
+              <select 
+                value={filters.age} 
+                onChange={(e) => handleFilterChange('age', e.target.value)}
+                className="filter-select"
+              >
+                {ageOptions.map(age => (
+                  <option key={age} value={age}>
+                    {age === 'all' ? 'All Ages' : age}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Gender</label>
+              <select 
+                value={filters.gender} 
+                onChange={(e) => handleFilterChange('gender', e.target.value)}
+                className="filter-select"
+              >
+                {genderOptions.map(gender => (
+                  <option key={gender} value={gender}>
+                    {gender === 'all' ? 'All Genders' : gender}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Size</label>
+              <select 
+                value={filters.size} 
+                onChange={(e) => handleFilterChange('size', e.target.value)}
+                className="filter-select"
+              >
+                {sizeOptions.map(size => (
+                  <option key={size} value={size}>
+                    {size === 'all' ? 'All Sizes' : size}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Location</label>
+              <select 
+                value={filters.location} 
+                onChange={(e) => handleFilterChange('location', e.target.value)}
+                className="filter-select"
+              >
+                {locationOptions.map(location => (
+                  <option key={location} value={location}>
+                    {location === 'all' ? 'All Locations' : location}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button className="clear-filters-btn" onClick={clearFilters}>
+              Clear Filters
             </button>
           </div>
-        )}
-      </section>
+        </section>
+
+        {/* Results Count */}
+        <div className="results-info">
+          <h3>
+            {filteredDogs.length} {filteredDogs.length === 1 ? 'dog' : 'dogs'} found
+          </h3>
+        </div>
+
+        {/* Dogs Grid */}
+        <section className="dogs-grid">
+          {filteredDogs.length > 0 ? (
+            filteredDogs.map(dog => (
+              <div key={dog._id} className="dog-card">
+                <div className="dog-image-container">
+                  <img
+                    src={dog.image || 'http://localhost:5000/uploads/placeholder-dog.jpg'}
+                    alt={dog.breed}
+                    className="dog-image"
+                    onError={(e) => {
+                      e.target.src = 'http://localhost:5000/uploads/placeholder-dog.jpg';
+                    }}
+                  />
+                  {dog.isAdopted && (
+                    <div className="adopted-badge">Adopted</div>
+                  )}
+                </div>
+                
+                <div className="dog-info">
+                  <h3 className="dog-name">{dog.breed}</h3>
+            
+                  
+                  <div className="dog-details">
+                    <div className="detail-item">
+                      <span className="detail-icon">🎂</span>
+                      <span>{dog.age}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-icon">{dog.gender === 'Male' ? '♂' : '♀'}</span>
+                      <span>{dog.gender}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-icon">📏</span>
+                      <span>{dog.size}</span>
+                    </div>
+                  </div>
+
+                  <div className="dog-location">
+                    <span className="location-icon">📍</span>
+                    <span>{dog.location?.city || 'Unknown Location'}</span>
+                  </div>
+
+                  {dog.description && (
+                    <p className="dog-description">{dog.description}</p>
+                  )}
+
+                  <div className="dog-actions">
+                    <button
+                      onClick={() => handleViewDetails(dog._id)}
+                      className="primary-btn"
+                      disabled={dog.isAdopted}
+                    >
+                      {dog.isAdopted ? 'Already Adopted' : 'View Details'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-results">
+              <div className="no-results-icon">😔</div>
+              <h3>No dogs found</h3>
+              <p>Try adjusting your search or filters</p>
+              <button onClick={clearFilters} className="clear-filters-btn">
+                Clear All Filters
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 };

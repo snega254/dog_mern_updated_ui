@@ -129,6 +129,16 @@ const DoctorBooking = () => {
     }
   };
 
+  const rescheduleAppointment = async (appointmentId) => {
+    // Implement reschedule functionality
+    alert('Reschedule functionality to be implemented');
+  };
+
+  const viewPrescription = async (appointmentId) => {
+    // Implement prescription view functionality
+    alert('Prescription view functionality to be implemented');
+  };
+
   const resetForm = () => {
     setSelectedDoctor(null);
     setSelectedDate('');
@@ -144,7 +154,9 @@ const DoctorBooking = () => {
     const statusConfig = {
       scheduled: { class: 'scheduled', label: 'Scheduled' },
       completed: { class: 'completed', label: 'Completed' },
-      cancelled: { class: 'cancelled', label: 'Cancelled' }
+      cancelled: { class: 'cancelled', label: 'Cancelled' },
+      confirmed: { class: 'confirmed', label: 'Confirmed' },
+      pending: { class: 'pending', label: 'Pending' }
     };
 
     const config = statusConfig[status] || statusConfig.scheduled;
@@ -155,6 +167,12 @@ const DoctorBooking = () => {
     const today = new Date();
     today.setDate(today.getDate() + 1); // Next day
     return today.toISOString().split('T')[0];
+  };
+
+  const getAppointmentType = (appointment) => {
+    if (appointment.followUp) return 'Follow-up';
+    if (appointment.emergency) return 'Emergency';
+    return 'Regular';
   };
 
   return (
@@ -172,91 +190,156 @@ const DoctorBooking = () => {
       <div className="booking-content">
         {/* Available Doctors */}
         <section className="doctors-section">
-          <h2>Available Veterinarians</h2>
-          <div className="doctors-grid">
-            {doctors.map(doctor => (
-              <div key={doctor.id} className="doctor-card">
-                <div className="doctor-header">
-                  <h3>{doctor.name}</h3>
-                  <div className="doctor-rating">
-                    ⭐ {doctor.rating}
+          <div className="section-header">
+            <h2>Available Veterinarians</h2>
+            <span className="count-badge">{doctors.length} doctors available</span>
+          </div>
+          <div className="scrollable-container doctors-scrollable">
+            <div className="doctors-grid">
+              {doctors.map(doctor => (
+                <div key={doctor.id} className="doctor-card">
+                  <div className="doctor-avatar">
+                    {doctor.name.charAt(0)}
                   </div>
+                  <div className="doctor-header">
+                    <h3>Dr. {doctor.name}</h3>
+                    <div className="doctor-rating">
+                      ⭐ {doctor.rating || '4.5'}
+                    </div>
+                  </div>
+                  <div className="doctor-specialization">
+                    {doctor.specialization}
+                  </div>
+                  <div className="doctor-experience">
+                    📅 {doctor.experience || '5+ years'} experience
+                  </div>
+                  <div className="doctor-meta">
+                    <span className="meta-item">👥 {doctor.patientsCount || '100+'} patients</span>
+                    <span className="meta-item">💬 {doctor.language || 'English, Hindi'}</span>
+                  </div>
+                  <div className="consultation-fee">
+                    Consultation Fee: ₹{doctor.fee || '500'}
+                  </div>
+                  <button
+                    onClick={() => handleDoctorSelect(doctor)}
+                    className="book-btn"
+                  >
+                    Book Appointment
+                  </button>
                 </div>
-                <div className="doctor-specialization">
-                  {doctor.specialization}
-                </div>
-                <div className="doctor-experience">
-                  Experience: {doctor.experience}
-                </div>
-                <div className="consultation-fee">
-                  Consultation Fee: ₹500
-                </div>
-                <button
-                  onClick={() => handleDoctorSelect(doctor)}
-                  className="book-btn"
-                >
-                  Book Appointment
-                </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
         {/* My Appointments */}
         <section className="appointments-section">
-          <h2>My Appointments</h2>
+          <div className="section-header">
+            <h2>My Appointments</h2>
+            <span className="count-badge">{appointments.length} total appointments</span>
+          </div>
+          
           {appointments.length === 0 ? (
             <div className="no-appointments">
               <div className="no-appointments-icon">📅</div>
               <h3>No appointments scheduled</h3>
               <p>Book your first appointment with one of our expert veterinarians.</p>
+              <button 
+                onClick={() => document.querySelector('.doctors-section').scrollIntoView({ behavior: 'smooth' })}
+                className="find-doctor-btn"
+              >
+                Find a Doctor
+              </button>
             </div>
           ) : (
-            <div className="appointments-list">
-              {appointments.map(appointment => (
-                <div key={appointment._id} className="appointment-card">
-                  <div className="appointment-header">
-                    <h3>Dr. {appointment.doctorName}</h3>
-                    {getStatusBadge(appointment.status)}
-                  </div>
-                  <div className="appointment-details">
-                    <div className="detail-item">
-                      <span className="label">Pet:</span>
-                      <span className="value">{appointment.petName}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Date:</span>
-                      <span className="value">
-                        {new Date(appointment.appointmentDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Time:</span>
-                      <span className="value">{appointment.appointmentTime}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">Specialization:</span>
-                      <span className="value">{appointment.specialization}</span>
-                    </div>
-                    {appointment.symptoms && (
-                      <div className="detail-item">
-                        <span className="label">Symptoms:</span>
-                        <span className="value">{appointment.symptoms}</span>
+            <div className="scrollable-container appointments-scrollable">
+              <div className="appointments-list">
+                {appointments.map(appointment => (
+                  <div key={appointment._id} className="appointment-card">
+                    <div className="appointment-header">
+                      <div className="appointment-title">
+                        <h3>Dr. {appointment.doctorName}</h3>
+                        <span className="appointment-type">
+                          {getAppointmentType(appointment)}
+                        </span>
                       </div>
-                    )}
+                      {getStatusBadge(appointment.status)}
+                    </div>
+                    
+                    <div className="appointment-details">
+                      <div className="details-grid">
+                        <div className="detail-item">
+                          <span className="label">🦴 Pet:</span>
+                          <span className="value">{appointment.petName} ({appointment.petType})</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">📅 Date:</span>
+                          <span className="value">
+                            {new Date(appointment.appointmentDate).toLocaleDateString('en-IN', {
+                              weekday: 'short',
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">⏰ Time:</span>
+                          <span className="value">{appointment.appointmentTime}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">🎯 Specialization:</span>
+                          <span className="value">{appointment.specialization}</span>
+                        </div>
+                        {appointment.symptoms && (
+                          <div className="detail-item full-width">
+                            <span className="label">📝 Symptoms:</span>
+                            <span className="value">{appointment.symptoms}</span>
+                          </div>
+                        )}
+                        {appointment.notes && (
+                          <div className="detail-item full-width">
+                            <span className="label">📋 Doctor Notes:</span>
+                            <span className="value">{appointment.notes}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="appointment-footer">
+                      <div className="appointment-id">
+                        ID: {appointment._id?.slice(-8).toUpperCase() || 'N/A'}
+                      </div>
+                      <div className="appointment-actions">
+                        {appointment.status === 'scheduled' && (
+                          <>
+                            <button
+                              onClick={() => cancelAppointment(appointment._id)}
+                              className="cancel-btn"
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              onClick={() => rescheduleAppointment(appointment._id)}
+                              className="reschedule-btn"
+                            >
+                              Reschedule
+                            </button>
+                          </>
+                        )}
+                        {(appointment.status === 'completed' && appointment.prescription) && (
+                          <button 
+                            onClick={() => viewPrescription(appointment._id)}
+                            className="prescription-btn"
+                          >
+                            View Prescription
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="appointment-actions">
-                    {appointment.status === 'scheduled' && (
-                      <button
-                        onClick={() => cancelAppointment(appointment._id)}
-                        className="cancel-btn"
-                      >
-                        Cancel Appointment
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </section>
@@ -276,11 +359,11 @@ const DoctorBooking = () => {
               </button>
             </div>
 
-            <div className="modal-body">
+            <div className="modal-body scrollable-container modal-scrollable">
               <div className="doctor-info">
                 <h4>Specialization: {selectedDoctor.specialization}</h4>
                 <p>Experience: {selectedDoctor.experience}</p>
-                <p className="fee">Consultation Fee: ₹500</p>
+                <p className="fee">Consultation Fee: ₹{selectedDoctor.fee || '500'}</p>
               </div>
 
               <div className="booking-form">
@@ -301,9 +384,11 @@ const DoctorBooking = () => {
                     value={formData.petType}
                     onChange={(e) => setFormData({...formData, petType: e.target.value})}
                   >
-                    <option value="Dog">Dog</option>
-                    <option value="Cat">Cat</option>
-                    <option value="Other">Other</option>
+                    <option value="Dog">🐕 Dog</option>
+                    <option value="Cat">🐈 Cat</option>
+                    <option value="Bird">🐦 Bird</option>
+                    <option value="Rabbit">🐇 Rabbit</option>
+                    <option value="Other">🐾 Other</option>
                   </select>
                 </div>
 
