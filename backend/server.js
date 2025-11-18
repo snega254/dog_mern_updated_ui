@@ -10,6 +10,7 @@ const path = require('path');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const accessoryOrderRoutes = require('./routes/accessoryOrders');
+const apiRoutes = require('./routes/api'); // ADD THIS LINE
 
 const app = express();
 const server = http.createServer(app);
@@ -88,9 +89,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// Routes - ADD THE API ROUTES HERE
+app.use('/api', apiRoutes); // THIS MOUNTS ALL ROUTES FROM api.js AT /api
 app.use('/auth', authRoutes);
-app.use('/api/products',productRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
 
 // Health check
@@ -101,6 +103,21 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
   });
+});
+
+// Test dogs endpoint directly
+app.get('/api/test-dogs', async (req, res) => {
+  try {
+    const Dog = require('./models/Dog');
+    const dogs = await Dog.find().limit(5);
+    res.json({ 
+      message: 'Dogs endpoint is working!', 
+      count: dogs.length,
+      dogs: dogs 
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Error handler
@@ -114,7 +131,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ message: `Route not found: ${req.method} ${req.url}` });
 });
 
 // Start server
