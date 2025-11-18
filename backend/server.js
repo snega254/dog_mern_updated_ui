@@ -10,7 +10,7 @@ const path = require('path');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const accessoryOrderRoutes = require('./routes/accessoryOrders');
-const apiRoutes = require('./routes/api'); // ADD THIS LINE
+const apiRoutes = require('./routes/api');
 
 const app = express();
 const server = http.createServer(app);
@@ -42,7 +42,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/dogworld'
   process.exit(1);
 });
 
-// Authentication middleware
+// Authentication middleware - FIXED VERSION
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -57,9 +57,19 @@ const authenticate = (req, res, next) => {
     
     const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-    req.user = decoded;
+    
+    // Enhanced user object with fallbacks for missing fields
+    req.user = {
+      id: decoded.id,
+      userType: decoded.userType || 'user', // Default to 'user' if missing
+      email: decoded.email,
+      name: decoded.name
+    };
+    
+    console.log('Authenticated user:', req.user);
     next();
   } catch (err) {
+    console.error('Authentication error:', err);
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
@@ -89,13 +99,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes - ADD THE API ROUTES HERE
-app.use('/api', apiRoutes); // THIS MOUNTS ALL ROUTES FROM api.js AT /api
+// Routes with authentication
+app.use('/api', authenticate, apiRoutes); // Add authenticate middleware here
 app.use('/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
 
-// Health check
+// Public routes (no authentication required)
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -105,7 +115,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Test dogs endpoint directly
+// Test dogs endpoint directly (public)
 app.get('/api/test-dogs', async (req, res) => {
   try {
     const Dog = require('./models/Dog');
@@ -117,6 +127,27 @@ app.get('/api/test-dogs', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Public dogs endpoint (without authentication)
+app.get('/api/public/dogs', async (req, res) => {
+  try {
+    const Dog = require('./models/Dog');
+    const dogs = await Dog.find({ isAvailable: true })
+      .populate('sellerId', 'name email contact')
+      .limit(20)
+      .sort({ createdAt: -1 });
+    
+    const dogsWithImages = dogs.map(dog => ({
+      ...dog.toObject(),
+      image: dog.image ? `http://localhost:5000${dog.image}` : 'http://localhost:5000/uploads/placeholder-dog.jpg'
+    }));
+
+    res.json(dogsWithImages);
+  } catch (err) {
+    console.error('Error fetching public dogs:', err);
+    res.status(500).json({ message: 'Failed to fetch dogs', error: err.message });
   }
 });
 

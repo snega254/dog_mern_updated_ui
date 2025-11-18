@@ -17,12 +17,22 @@
   --transition: all 0.3s ease;
 }
 
+/* FIX: Make body and html full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent double scrollbars */
+}
+
 .manage-orders-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  min-height: 100vh;
+  height: 100vh; /* Use full viewport height */
   background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  overflow-y: auto; /* ENABLE SCROLLING */
+  box-sizing: border-box;
 }
 
 .orders-header {
@@ -144,11 +154,12 @@
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
-/* Orders List */
+/* Orders List - REMOVE max-height to allow natural scrolling */
 .orders-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Remove max-height and overflow */
 }
 
 .order-card {
@@ -159,6 +170,7 @@
   transition: var(--transition);
   border-left: 5px solid var(--pink-primary);
   border: 2px solid var(--pink-border);
+  margin-bottom: 15px;
 }
 
 .order-card:hover {
@@ -224,18 +236,6 @@
   background: #fee2e2;
   color: #991b1b;
   border-color: #ef4444;
-}
-
-.status-badge.shipped {
-  background: #e0e7ff;
-  color: #3730a3;
-  border-color: #6366f1;
-}
-
-.status-badge.delivered {
-  background: #f0fdf4;
-  color: #166534;
-  border-color: #22c55e;
 }
 
 /* Order Details */
@@ -369,6 +369,31 @@
   border-color: #ef4444;
 }
 
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  color: var(--pink-text);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--pink-super-light);
+  border-left: 4px solid var(--pink-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* No Orders State */
 .no-orders {
   text-align: center;
@@ -463,6 +488,8 @@
 
 .modal-body {
   padding: 25px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .detail-section {
@@ -561,9 +588,9 @@
   box-shadow: 0 6px 15px rgba(219, 39, 119, 0.4);
 }
 
-/* Pink Scrollbars */
+/* Scrollbar Styling */
 .manage-orders-container::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 .manage-orders-container::-webkit-scrollbar-track {
@@ -574,7 +601,7 @@
 .manage-orders-container::-webkit-scrollbar-thumb {
   background: var(--pink-primary);
   border-radius: 10px;
-  border: 2px solid var(--pink-super-light);
+  border: 3px solid var(--pink-super-light);
 }
 
 .manage-orders-container::-webkit-scrollbar-thumb:hover {
@@ -599,6 +626,24 @@
   background: var(--pink-primary);
 }
 
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: var(--pink-super-light);
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--pink-medium);
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--pink-primary);
+}
+
 /* For Firefox */
 .manage-orders-container {
   scrollbar-width: thin;
@@ -614,6 +659,7 @@
 @media (max-width: 768px) {
   .manage-orders-container {
     padding: 15px;
+    height: 100vh;
   }
 
   .orders-header {
