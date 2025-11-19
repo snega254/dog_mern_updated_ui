@@ -9,6 +9,8 @@ const Accessories = () => {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSellerDetails, setShowSellerDetails] = useState(false);
+  const [selectedSellers, setSelectedSellers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filters, setFilters] = useState({
@@ -29,6 +31,8 @@ const Accessories = () => {
     pincode: '',
     phone: ''
   });
+  const [formErrors, setFormErrors] = useState({});
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
   // Get authentication token
   const getAuthToken = () => {
@@ -76,7 +80,6 @@ const Accessories = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Token might be expired, redirect to login
           localStorage.removeItem('token');
           setIsAuthenticated(false);
           throw new Error('Please login to access products');
@@ -171,7 +174,8 @@ const Accessories = () => {
         price: product.price, 
         quantity: 1,
         image: product.image,
-        sellerId: product.sellerId?._id || product.sellerId
+        sellerId: product.sellerId?._id || product.sellerId,
+        sellerName: product.sellerId?.name || 'Seller'
       };
       saveCart([...cart, newCartItem]);
     }
@@ -202,6 +206,41 @@ const Accessories = () => {
     saveCart(updatedCart);
   };
 
+  // Get unique sellers from cart
+  const getUniqueSellers = () => {
+    const sellers = cart.map(item => ({
+      sellerId: item.sellerId,
+      sellerName: item.sellerName,
+      products: cart.filter(cartItem => cartItem.sellerId === item.sellerId)
+    }));
+    return sellers.filter((seller, index, self) => 
+      index === self.findIndex(s => s.sellerId === seller.sellerId)
+    );
+  };
+
+  // Validate shipping address
+  const validateShippingAddress = () => {
+    const errors = {};
+    
+    if (!shippingAddress.name?.trim()) errors.name = 'Full name is required';
+    if (!shippingAddress.address?.trim()) errors.address = 'Address is required';
+    if (!shippingAddress.city?.trim()) errors.city = 'City is required';
+    if (!shippingAddress.state?.trim()) errors.state = 'State is required';
+    if (!shippingAddress.pincode?.trim()) errors.pincode = 'Pincode is required';
+    if (!shippingAddress.phone?.trim()) errors.phone = 'Phone number is required';
+    
+    if (shippingAddress.phone && !/^\d{10}$/.test(shippingAddress.phone)) {
+      errors.phone = 'Phone number must be 10 digits';
+    }
+    
+    if (shippingAddress.pincode && !/^\d{6}$/.test(shippingAddress.pincode)) {
+      errors.pincode = 'Pincode must be 6 digits';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleCheckout = () => {
     if (!isAuthenticated) {
       alert('Please login to place an order');
@@ -212,7 +251,10 @@ const Accessories = () => {
       alert('Your cart is empty!');
       return;
     }
-    setShowPaymentModal(true);
+
+    // Show seller details for online payment confirmation
+    setSelectedSellers(getUniqueSellers());
+    setShowSellerDetails(true);
   };
 
   const handlePayment = async (paymentMethod) => {
@@ -224,16 +266,28 @@ const Accessories = () => {
         alert('Please login to place an order');
         return;
       }
-      
+
+      // VALIDATE SHIPPING ADDRESS BEFORE PROCEEDING
+      if (!validateShippingAddress()) {
+        alert('Please fix the shipping address errors before placing order');
+        setLoading(false);
+        return;
+      }
+
       // Create order payload
       const orderData = {
         products: cart.map(item => ({
           productId: item.productDbId,
-          quantity: item.quantity
+          productDbId: item.productDbId,
+          quantity: item.quantity,
+          sellerId: item.sellerId
         })),
         shippingAddress: shippingAddress,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
+        paymentStatus: paymentMethod === 'online' ? 'pending' : 'cod'
       };
+
+      console.log('📦 Order payload:', orderData);
 
       const response = await fetch(`${API_BASE}/accessory-orders`, {
         method: 'POST',
@@ -247,13 +301,20 @@ const Accessories = () => {
       if (response.ok) {
         const result = await response.json();
         
-        alert(`Order placed successfully! Order ID: ${result.order.orderId}`);
+        if (paymentMethod === 'online') {
+          alert(`✅ Order placed successfully!\nOrder ID: ${result.order.orderId}\n\n📧 Sellers have been notified. They will confirm payment and process your order.`);
+        } else {
+          alert(`✅ Order placed successfully!\nOrder ID: ${result.order.orderId}\n\n💰 Pay ₹${total} when your order is delivered.`);
+        }
+        
         saveCart([]);
         setShowCart(false);
         setShowPaymentModal(false);
+        setShowSellerDetails(false);
         setShippingAddress({
           name: '', address: '', city: '', state: '', pincode: '', phone: ''
         });
+        setFormErrors({});
         
         // Refresh products to update stock
         fetchProducts();
@@ -512,6 +573,9 @@ const Accessories = () => {
                           +
                         </button>
                       </div>
+                      <div className="seller-info-small">
+                        Seller: {item.sellerName}
+                      </div>
                     </div>
                     <button 
                       onClick={() => removeFromCart(item.productId)}
@@ -537,6 +601,74 @@ const Accessories = () => {
             )}
           </div>
 
+          {/* Seller Details Modal */}
+          {showSellerDetails && (
+            <div className="modal-overlay">
+              <div className="modal-content seller-details-modal">
+                <h2>🛒 Order Confirmation</h2>
+                <p>You are purchasing from {selectedSellers.length} seller(s):</p>
+                
+                <div className="sellers-list">
+                  {selectedSellers.map((seller, index) => (
+                    <div key={seller.sellerId} className="seller-card">
+                      <h4>Seller {index + 1}: {seller.sellerName}</h4>
+                      <div className="seller-products">
+                        {seller.products.map(item => (
+                          <div key={item.productId} className="seller-product-item">
+                            <span>{item.name} x {item.quantity}</span>
+                            <span>₹{item.price * item.quantity}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="seller-total">
+                        Total: ₹{seller.products.reduce((sum, item) => sum + (item.price * item.quantity), 0)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="total-amount">
+                  <h3>Grand Total: ₹{total}</h3>
+                </div>
+
+                <div className="payment-options">
+                  <h3>Choose Payment Method</h3>
+                  <div className="payment-buttons">
+                    <button 
+                      onClick={() => {
+                        setShowSellerDetails(false);
+                        setShowPaymentModal(true);
+                        setSelectedPaymentMethod('online');
+                      }}
+                      className="payment-btn online-btn"
+                    >
+                      💳 Pay Online
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setShowSellerDetails(false);
+                        setShowPaymentModal(true);
+                        setSelectedPaymentMethod('cod');
+                      }}
+                      className="payment-btn cod-btn"
+                    >
+                      💰 Cash on Delivery
+                    </button>
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  <button 
+                    onClick={() => setShowSellerDetails(false)}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Payment Modal */}
           {showPaymentModal && (
             <div className="modal-overlay">
@@ -544,58 +676,94 @@ const Accessories = () => {
                 <h2>Complete Your Order</h2>
                 
                 <div className="shipping-form">
-                  <h3>Shipping Address</h3>
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={shippingAddress.name}
-                    onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})}
-                    className="form-input"
-                    required
-                  />
-                  <textarea
-                    placeholder="Full Address"
-                    value={shippingAddress.address}
-                    onChange={(e) => setShippingAddress({...shippingAddress, address: e.target.value})}
-                    className="form-textarea"
-                    rows="3"
-                    required
-                  />
-                  <div className="form-row">
+                  <h3>📬 Shipping Address <span className="required-star">* Required</span></h3>
+                  
+                  <div className="form-group">
                     <input
                       type="text"
-                      placeholder="City"
-                      value={shippingAddress.city}
-                      onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                      className="form-input"
-                      required
+                      placeholder="Full Name *"
+                      value={shippingAddress.name}
+                      onChange={(e) => {
+                        setShippingAddress({...shippingAddress, name: e.target.value});
+                        if (formErrors.name) setFormErrors({...formErrors, name: ''});
+                      }}
+                      className={`form-input ${formErrors.name ? 'error' : ''}`}
                     />
-                    <input
-                      type="text"
-                      placeholder="State"
-                      value={shippingAddress.state}
-                      onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
-                      className="form-input"
-                      required
-                    />
+                    {formErrors.name && <span className="field-error">{formErrors.name}</span>}
                   </div>
+                  
+                  <div className="form-group">
+                    <textarea
+                      placeholder="Full Address * (House No, Street, Area)"
+                      value={shippingAddress.address}
+                      onChange={(e) => {
+                        setShippingAddress({...shippingAddress, address: e.target.value});
+                        if (formErrors.address) setFormErrors({...formErrors, address: ''});
+                      }}
+                      className={`form-textarea ${formErrors.address ? 'error' : ''}`}
+                      rows="3"
+                    />
+                    {formErrors.address && <span className="field-error">{formErrors.address}</span>}
+                  </div>
+                  
                   <div className="form-row">
-                    <input
-                      type="text"
-                      placeholder="Pincode"
-                      value={shippingAddress.pincode}
-                      onChange={(e) => setShippingAddress({...shippingAddress, pincode: e.target.value})}
-                      className="form-input"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Phone"
-                      value={shippingAddress.phone}
-                      onChange={(e) => setShippingAddress({...shippingAddress, phone: e.target.value})}
-                      className="form-input"
-                      required
-                    />
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="City *"
+                        value={shippingAddress.city}
+                        onChange={(e) => {
+                          setShippingAddress({...shippingAddress, city: e.target.value});
+                          if (formErrors.city) setFormErrors({...formErrors, city: ''});
+                        }}
+                        className={`form-input ${formErrors.city ? 'error' : ''}`}
+                      />
+                      {formErrors.city && <span className="field-error">{formErrors.city}</span>}
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="State *"
+                        value={shippingAddress.state}
+                        onChange={(e) => {
+                          setShippingAddress({...shippingAddress, state: e.target.value});
+                          if (formErrors.state) setFormErrors({...formErrors, state: ''});
+                        }}
+                        className={`form-input ${formErrors.state ? 'error' : ''}`}
+                      />
+                      {formErrors.state && <span className="field-error">{formErrors.state}</span>}
+                    </div>
+                  </div>
+                  
+                  <div className="form-row">
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Pincode *"
+                        value={shippingAddress.pincode}
+                        onChange={(e) => {
+                          setShippingAddress({...shippingAddress, pincode: e.target.value});
+                          if (formErrors.pincode) setFormErrors({...formErrors, pincode: ''});
+                        }}
+                        className={`form-input ${formErrors.pincode ? 'error' : ''}`}
+                        maxLength="6"
+                      />
+                      {formErrors.pincode && <span className="field-error">{formErrors.pincode}</span>}
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        placeholder="Phone Number *"
+                        value={shippingAddress.phone}
+                        onChange={(e) => {
+                          setShippingAddress({...shippingAddress, phone: e.target.value});
+                          if (formErrors.phone) setFormErrors({...formErrors, phone: ''});
+                        }}
+                        className={`form-input ${formErrors.phone ? 'error' : ''}`}
+                        maxLength="10"
+                      />
+                      {formErrors.phone && <span className="field-error">{formErrors.phone}</span>}
+                    </div>
                   </div>
                 </div>
 
@@ -615,33 +783,50 @@ const Accessories = () => {
                   </div>
                 </div>
 
-                <div className="payment-options">
-                  <h3>Payment Method</h3>
-                  <div className="payment-buttons">
-                    <button 
-                      onClick={() => handlePayment('cod')}
-                      className="payment-btn cod-btn"
-                      disabled={loading}
-                    >
-                      💰 Cash on Delivery
-                    </button>
-                    <button 
-                      onClick={() => handlePayment('online')}
-                      className="payment-btn online-btn"
-                      disabled={loading}
-                    >
-                      💳 Pay Online
-                    </button>
+                {selectedPaymentMethod === 'online' && (
+                  <div className="payment-instructions">
+                    <h4>💡 Online Payment Instructions:</h4>
+                    <p>After placing order, sellers will:</p>
+                    <ul>
+                      <li>✅ Verify payment receipt</li>
+                      <li>✅ Confirm your order</li>
+                      <li>🚚 Ship your products</li>
+                    </ul>
+                    <p>You'll receive notifications at each step!</p>
                   </div>
-                </div>
+                )}
+
+                {selectedPaymentMethod === 'cod' && (
+                  <div className="payment-instructions cod-instructions">
+                    <h4>💰 Cash on Delivery Instructions:</h4>
+                    <p>With COD, you can:</p>
+                    <ul>
+                      <li>✅ Pay when your order arrives</li>
+                      <li>✅ Check products before payment</li>
+                      <li>✅ No online payment required</li>
+                    </ul>
+                    <p>Simply pay ₹{total} to the delivery person!</p>
+                  </div>
+                )}
 
                 <div className="modal-actions">
                   <button 
-                    onClick={() => setShowPaymentModal(false)}
-                    className="cancel-btn"
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      setShowSellerDetails(true);
+                    }}
+                    className="back-btn"
+                  >
+                    ← Back
+                  </button>
+                  <button 
+                    onClick={() => handlePayment(selectedPaymentMethod)}
+                    className={`confirm-payment-btn ${selectedPaymentMethod}`}
                     disabled={loading}
                   >
-                    Cancel
+                    {loading ? 'Placing Order...' : 
+                     selectedPaymentMethod === 'online' ? '💳 Place Online Order' : 
+                     '💰 Place COD Order'}
                   </button>
                 </div>
               </div>

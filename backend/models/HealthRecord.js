@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const healthRecordSchema = new mongoose.Schema({
-  recordId: { 
-    type: String, 
-    required: true, 
-    unique: true 
-  },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 

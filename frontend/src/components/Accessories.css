@@ -1,11 +1,11 @@
-/* Accessories.css - BLUE THEME WITH SCROLLING */
+/* Accessories.css - FULL BLUE THEME */
 :root {
   --primary: #3b82f6;
   --primary-light: #60a5fa;
   --primary-dark: #2563eb;
   --secondary: #dbeafe;
   --dark: #1e40af;
-  --light: #eff6ff;
+  --light: #539bfa;
 
   --gray: #6b7280;
   --danger: #ef4444;
@@ -118,7 +118,7 @@
 .filters-section {
   background: #f8fafc;
   padding: 30px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #1072f1;
   flex-shrink: 0;
 }
 
@@ -178,25 +178,25 @@
 .filter-group label {
   margin-bottom: 8px;
   font-weight: 600;
-  color: var(--dark);
+  color: #2563eb;
   font-size: 0.9rem;
 }
 
 .filter-select {
   padding: 12px 15px;
-  border: 2px solid #e2e8f0;
+  border: #2563eb;
   border-radius: 10px;
   font-size: 1rem;
   background: white;
-  transition: var(--transition);
-  color: var(--dark);
+  transition: #2563eb;
+  color: #2563eb;
   cursor: pointer;
 }
 
 .filter-select:focus {
-  border-color: var(--primary);
+  border-color: #2563eb;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: #2563eb;
 }
 
 .clear-filters-btn {
@@ -244,7 +244,7 @@
 .product-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15);
-  border-color: var(--primary-light);
+  border-color: #2563eb;
 }
 
 .product-image {
@@ -306,17 +306,17 @@
 }
 
 .product-category, .product-brand {
-  background: var(--light);
+  background: #2563eb;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--gray);
+  color: white;
 }
 
 .product-id-small {
-  background: #f1f5f9;
-  color: var(--primary);
+  background: #2563eb;
+  color: white;
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 0.7rem;
@@ -325,9 +325,15 @@
 }
 
 .seller-info {
-  margin: 8px 0;
+   margin: 8px 0;
   color: var(--gray);
   font-size: 0.9rem;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  border-left: 3px solid var(--primary);
+  
 }
 
 .specifications-preview {
@@ -655,7 +661,7 @@
 
 .checkout-btn {
   width: 100%;
-  background: var(--success);
+  background: #3b82f6;
   color: white;
   border: none;
   padding: 15px;
@@ -663,13 +669,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .checkout-btn:hover {
-  background: #17a673;
+  background: #2563eb;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
 }
 
 /* Payment Modal */
@@ -793,12 +799,12 @@
   padding: 15px;
   border-radius: 8px;
   margin: 15px 25px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #3b82f6;
 }
 
 .seller-contact-info h3 {
   margin: 0 0 10px 0;
-  color: #333;
+  color: var(--dark);
   font-size: 16px;
 }
 
@@ -816,14 +822,14 @@
 }
 
 .no-phone {
-  color: #dc3545;
+  color: var(--danger);
   font-style: italic;
 }
 
 .contact-note {
   margin: 10px 0 0 0;
   font-size: 12px;
-  color: #666;
+  color: var(--gray);
   font-style: italic;
 }
 
@@ -874,24 +880,24 @@
 }
 
 .cod-btn {
-  background: #28a745;
+  background: #3b82f6;
   color: white;
   border: none;
 }
 
 .cod-btn:hover:not(:disabled) {
-  background: #218838;
+  background: #2563eb;
   color: white;
 }
 
 .online-btn {
-  background: #007bff;
+  background: #3b82f6;
   color: white;
   border: none;
 }
 
 .online-btn:hover:not(:disabled) {
-  background: #0056b3;
+  background: #2563eb;
   color: white;
 }
 
@@ -940,7 +946,7 @@
 .accessories-container::-webkit-scrollbar-thumb {
   background: #3b82f6;
   border-radius: 10px;
-  border: 2px solid  #3b82f6;
+  border: 2px solid #3b82f6;
 }
 
 .accessories-container::-webkit-scrollbar-thumb:hover {
@@ -952,7 +958,7 @@
 }
 
 .products-grid-container::-webkit-scrollbar-track {
-  background:  #3b82f6 ;
+  background: #f1f5f9;
   border-radius: 10px;
 }
 
@@ -1149,17 +1155,69 @@
 /* Success state for add to cart */
 @keyframes successPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
   }
 }
 
 .add-to-cart-btn.success {
   animation: successPulse 0.6s ease;
-  background: var(--success);
+  background: var(--primary);
+}
+
+/* Blue theme enhancements */
+.quantity-btn:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.spec-badge {
+  background: #e3f2fd;
+  color: #1e40af;
+  border: 1px solid #bbdefb;
+}
+
+.product-price {
+  color: #3b82f6;
+}
+
+.cart-item-price {
+  color: #3b82f6;
+}
+
+/* Ensure all interactive elements are blue */
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Override any potential pink colors */
+button:not(.close-cart):not(.remove-item-btn):not(.quantity-btn):not(.cancel-btn) {
+  background: #3b82f6 !important;
+  color: white !important;
+  border: none !important;
+}
+
+button:not(.close-cart):not(.remove-item-btn):not(.quantity-btn):not(.cancel-btn):hover:not(:disabled) {
+  background: #2563eb !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
 }

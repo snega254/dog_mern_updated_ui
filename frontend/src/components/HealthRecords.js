@@ -81,17 +81,59 @@ const HealthRecords = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/health', newRecord, {
-        headers: { Authorization: `Bearer ${token}` }
+      
+      // Transform the data to match backend expectations
+      const recordData = {
+        dogName: newRecord.dogName.trim(),
+        breed: newRecord.breed.trim(),
+        age: newRecord.age.trim(),
+        weight: newRecord.weight ? parseFloat(newRecord.weight) : null,
+        // Convert allergies string to array
+        allergies: newRecord.allergies 
+          ? newRecord.allergies.split(',').map(allergy => allergy.trim()).filter(allergy => allergy)
+          : [],
+        // Add empty arrays for other fields
+        vaccinations: [],
+        medicalConditions: [],
+        medications: [],
+        vetVisits: [],
+        emergencyContact: newRecord.emergencyContact.name 
+          ? newRecord.emergencyContact 
+          : {}
+      };
+
+      console.log('📝 Sending health record data:', recordData);
+
+      const response = await axios.post('http://localhost:5000/api/health', recordData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
+      console.log('✅ Health record created successfully:', response.data);
       alert('Health record created successfully!');
       setShowCreateModal(false);
       resetNewRecordForm();
       fetchHealthRecords();
+      
     } catch (error) {
-      console.error('Error creating health record:', error);
-      alert('Failed to create health record. Please try again.');
+      console.error('❌ Error creating health record:', error);
+      
+      // Detailed error logging
+      if (error.response) {
+        console.error('📡 Server Response Error:');
+        console.error('Status:', error.response.status);
+        console.error('Data:', error.response.data);
+        console.error('Headers:', error.response.headers);
+        alert(`Failed to create health record: ${error.response.data.message || 'Please check the data and try again.'}`);
+      } else if (error.request) {
+        console.error('📡 No response received:', error.request);
+        alert('Network error: Could not connect to server. Please try again.');
+      } else {
+        console.error('💥 Error setting up request:', error.message);
+        alert('Error: ' + error.message);
+      }
     }
   };
 

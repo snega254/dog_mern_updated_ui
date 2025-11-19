@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const HealthRecord = require('../models/HealthRecord');
-const { v4: uuidv4 } = require('uuid');
-
-// Generate record ID
-const generateRecordId = async () => {
-  const count = await HealthRecord.countDocuments();
-  return `HEALTH-${String(count + 1).padStart(5, '0')}`;
-};
 
 // Get user's health records
 router.get('/', async (req, res) => {
   try {
+    console.log('Fetching health records for user:', req.user.id);
+    
     const records = await HealthRecord.find({ userId: req.user.id })
       .sort({ createdAt: -1 });
     
@@ -21,27 +16,37 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching health records:', err);
-    res.status(500).json({ message: 'Failed to fetch health records', error: err.message });
+    res.status(500).json({ 
+      message: 'Failed to fetch health records', 
+      error: err.message 
+    });
   }
 });
 
 // Create new health record
 router.post('/', async (req, res) => {
   try {
+    console.log('Creating health record for user:', req.user.id);
+    console.log('Request body:', req.body);
+    
     const { 
       dogName, breed, age, weight, 
       vaccinations, medicalConditions, medications, 
       vetVisits, allergies, emergencyContact 
     } = req.body;
     
-    const recordId = await generateRecordId();
+    // Validation
+    if (!dogName) {
+      return res.status(400).json({ 
+        message: 'Dog name is required' 
+      });
+    }
 
     const record = new HealthRecord({
-      recordId,
       userId: req.user.id,
-      dogName,
-      breed,
-      age,
+      dogName: dogName.trim(),
+      breed: breed?.trim(),
+      age: age?.trim(),
       weight: weight ? parseFloat(weight) : null,
       vaccinations: vaccinations || [],
       medicalConditions: medicalConditions || [],
@@ -51,16 +56,36 @@ router.post('/', async (req, res) => {
       emergencyContact: emergencyContact || {}
     });
 
+    // Validate before saving
+    const validationError = record.validateSync();
+    if (validationError) {
+      return res.status(400).json({ 
+        message: 'Validation failed', 
+        error: validationError.message 
+      });
+    }
+
     await record.save();
 
-    res.json({
+    res.status(201).json({
       success: true,
       message: 'Health record created successfully',
       record
     });
   } catch (err) {
     console.error('Error creating health record:', err);
-    res.status(500).json({ message: 'Failed to create health record', error: err.message });
+    
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: 'Validation failed', 
+        error: err.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Failed to create health record', 
+      error: err.message 
+    });
   }
 });
 
@@ -178,7 +203,7 @@ router.get('/upcoming-vaccinations', async (req, res) => {
       record.vaccinations.forEach(vaccination => {
         if (vaccination.nextDue && vaccination.nextDue <= nextMonth && vaccination.nextDue >= now) {
           upcomingVaccinations.push({
-            recordId: record.recordId,
+            recordId: record._id, // Use _id instead of recordId
             dogName: record.dogName,
             vaccination: vaccination
           });

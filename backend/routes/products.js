@@ -54,8 +54,8 @@ router.get('/', async (req, res) => {
     if (sort === 'price-low') sortQuery = { price: 1 };
     if (sort === 'price-high') sortQuery = { price: -1 };
 
-    const products = await Product.find(query)
-      .populate('sellerId', 'name email')
+     const products = await Product.find(query)
+      .populate('sellerId', 'name email _id') // FIX: Make sure to include _id
       .sort(sortQuery);
 
     res.json(products);
