@@ -59,15 +59,17 @@ const productSchema = new mongoose.Schema({
 
 // Generate product ID before saving
 productSchema.pre('save', async function(next) {
-  try {
-    if (!this.productId) {
+  if (this.isNew && !this.productId) {
+    try {
       const count = await mongoose.model('Product').countDocuments();
       this.productId = `PROD${(count + 1).toString().padStart(4, '0')}`;
+    } catch (error) {
+      // Fallback if count fails
+      this.productId = `PROD${Date.now().toString().slice(-6)}`;
     }
-    next();
-  } catch (error) {
-    next(error);
   }
+  next();
 });
 
-module.exports = mongoose.model('Product', productSchema);
+// Safe export to prevent OverwriteModelError
+module.exports = mongoose.models.Product || mongoose.model('Product', productSchema);

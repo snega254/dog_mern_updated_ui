@@ -6,12 +6,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/products');
-const accessoryOrderRoutes = require('./routes/accessoryOrders');
-const apiRoutes = require('./routes/api');
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -42,7 +36,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/dogworld'
   process.exit(1);
 });
 
-// Authentication middleware - FIXED VERSION
+// Authentication middleware
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -57,19 +51,9 @@ const authenticate = (req, res, next) => {
     
     const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-    
-    // Enhanced user object with fallbacks for missing fields
-    req.user = {
-      id: decoded.id,
-      userType: decoded.userType || 'user', // Default to 'user' if missing
-      email: decoded.email,
-      name: decoded.name
-    };
-    
-    console.log('Authenticated user:', req.user);
+    req.user = decoded;
     next();
   } catch (err) {
-    console.error('Authentication error:', err);
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
@@ -99,13 +83,27 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes with authentication
-app.use('/api', authenticate, apiRoutes); // Add authenticate middleware here
-app.use('/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
+// Import routes
+const authRoutes = require('./routes/auth');
+const apiRoutes = require('./routes/api');
+const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
+const accessoryOrderRoutes = require('./routes/accessoryOrders');
+const doctorRoutes = require('./routes/doctors');
+const postRoutes = require('./routes/posts');
+const healthRoutes = require('./routes/health');
 
-// Public routes (no authentication required)
+// Routes
+app.use('/auth', authRoutes);
+app.use('/api', authenticate, apiRoutes);
+app.use('/api/products', authenticate, productRoutes);
+app.use('/api/orders', authenticate, orderRoutes);
+app.use('/api/accessory-orders', authenticate, accessoryOrderRoutes);
+app.use('/api/doctors', authenticate, doctorRoutes);
+app.use('/api/posts', authenticate, postRoutes);
+app.use('/api/health', authenticate, healthRoutes);
+
+// Health check
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -115,22 +113,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Test dogs endpoint directly (public)
-app.get('/api/test-dogs', async (req, res) => {
-  try {
-    const Dog = require('./models/Dog');
-    const dogs = await Dog.find().limit(5);
-    res.json({ 
-      message: 'Dogs endpoint is working!', 
-      count: dogs.length,
-      dogs: dogs 
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Public dogs endpoint (without authentication)
+// Public dogs endpoint
 app.get('/api/public/dogs', async (req, res) => {
   try {
     const Dog = require('./models/Dog');
@@ -144,11 +127,47 @@ app.get('/api/public/dogs', async (req, res) => {
       image: dog.image ? `http://localhost:5000${dog.image}` : 'http://localhost:5000/uploads/placeholder-dog.jpg'
     }));
 
-    res.json(dogsWithImages);
+    res.json({
+      success: true,
+      data: dogsWithImages,
+      count: dogsWithImages.length
+    });
   } catch (err) {
     console.error('Error fetching public dogs:', err);
-    res.status(500).json({ message: 'Failed to fetch dogs', error: err.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch dogs', 
+      error: err.message 
+    });
   }
+});
+
+// Test endpoint
+app.get('/api/test-dogs', async (req, res) => {
+  try {
+    const Dog = require('./models/Dog');
+    const dogs = await Dog.find().limit(5);
+    res.json({ 
+      success: true,
+      message: 'Dogs endpoint is working!', 
+      count: dogs.length,
+      data: dogs 
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false,
+      error: err.message 
+    });
+  }
+});
+
+// Placeholder images
+app.get('/uploads/placeholder-dog.jpg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'uploads', 'placeholder-dog.jpg'));
+});
+
+app.get('/uploads/placeholder-product.jpg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'uploads', 'placeholder-product.jpg'));
 });
 
 // Error handler
@@ -162,7 +181,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ message: `Route not found: ${req.method} ${req.url}` });
+  res.status(404).json({ message: 'Route not found' });
 });
 
 // Start server

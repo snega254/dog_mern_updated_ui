@@ -69,4 +69,5 @@ const dogSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Dog', dogSchema);
+// Safe export to prevent OverwriteModelError
+module.exports = mongoose.models.Dog || mongoose.model('Dog', dogSchema);

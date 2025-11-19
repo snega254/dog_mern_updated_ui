@@ -90,11 +90,17 @@ const accessoryOrderSchema = new mongoose.Schema({
 
 // Generate order ID before saving
 accessoryOrderSchema.pre('save', async function(next) {
-  if (!this.orderId) {
-    const count = await mongoose.model('AccessoryOrder').countDocuments();
-    this.orderId = `ACC${(count + 1).toString().padStart(4, '0')}`;
+  if (this.isNew && !this.orderId) {
+    try {
+      const count = await mongoose.model('AccessoryOrder').countDocuments();
+      this.orderId = `ACC${(count + 1).toString().padStart(4, '0')}`;
+    } catch (error) {
+      // Fallback if count fails
+      this.orderId = `ACC${Date.now().toString().slice(-6)}`;
+    }
   }
   next();
 });
 
-module.exports = mongoose.model('AccessoryOrder', accessoryOrderSchema);
+// Safe export to prevent OverwriteModelError
+module.exports = mongoose.models.AccessoryOrder || mongoose.model('AccessoryOrder', accessoryOrderSchema);

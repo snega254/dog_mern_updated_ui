@@ -393,19 +393,21 @@ const DogPosts = () => {
                 </button>
               </div>
 
-              {/* Comments Section */}
+              {/* Comments Section - UPDATED STRUCTURE */}
               <div className="comments-section">
-                {post.comments && post.comments.slice(0, 3).map(comment => (
-                  <div key={comment._id} className="comment">
-                    <div className="comment-user">
-                      <strong>{comment.userId?.name || 'Anonymous'}:</strong>
+                <div className="comments-scroll-container">
+                  {post.comments && post.comments.slice(0, 10).map(comment => (
+                    <div key={comment._id} className="comment">
+                      <div className="comment-user">
+                        <strong>{comment.userId?.name || 'Anonymous'}:</strong>
+                      </div>
+                      <div className="comment-text">{comment.text}</div>
+                      <div className="comment-time">
+                        {new Date(comment.createdAt).toLocaleTimeString()}
+                      </div>
                     </div>
-                    <div className="comment-text">{comment.text}</div>
-                    <div className="comment-time">
-                      {new Date(comment.createdAt).toLocaleTimeString()}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
                 
                 {/* Add Comment */}
                 <div className="add-comment">
@@ -427,10 +429,10 @@ const DogPosts = () => {
         )}
       </div>
 
-      {/* Create Post Modal */}
+      {/* Create Post Modal - FIXED CLASS NAME */}
       {showCreateModal && (
         <div className="modal-overlay">
-          <div className="modal-content create-post-modal">
+          <div className="create-post-modal"> {/* ← REMOVED modal-content class */}
             <div className="modal-header">
               <h2>Create New Post</h2>
               <button

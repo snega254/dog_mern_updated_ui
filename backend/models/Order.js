@@ -24,4 +24,5 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+// SAFE EXPORT - Prevents OverwriteModelError
+module.exports = mongoose.models.Order || mongoose.model('Order', orderSchema);
